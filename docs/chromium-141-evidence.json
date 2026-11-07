@@ -1,0 +1,151 @@
+{
+  "timestamp": "2026-11-07T10:41:16.751Z",
+  "browser": "141.0.7390.0",
+  "base": "http://localhost:3000",
+  "results": [
+    {
+      "name": "initial state is disabled; actual published size is displayed",
+      "passed": true
+    },
+    {
+      "name": "real ZIP prepares without any download or object URL",
+      "passed": true
+    },
+    {
+      "name": "pack details, modal Escape and compatibility receiver link work",
+      "passed": true
+    },
+    {
+      "name": "cleanup resets drag availability and allows another preparation",
+      "passed": true
+    },
+    {
+      "name": "trusted pointer drag contains a File at source; record actual receiver outcome",
+      "passed": true
+    },
+    {
+      "name": "explicit fallback alone starts a download; clear revokes its URL",
+      "passed": true
+    },
+    {
+      "name": "HTTP 404 error is visible and file stays unavailable",
+      "passed": true
+    },
+    {
+      "name": "HTML response is rejected instead of becoming a ZIP",
+      "passed": true
+    },
+    {
+      "name": "invalid bytes with ZIP MIME and correct size are rejected structurally",
+      "passed": true
+    },
+    {
+      "name": "oversized declared response is rejected before retention",
+      "passed": true
+    },
+    {
+      "name": "network failure gets an honest combined network/CORS error",
+      "passed": true
+    },
+    {
+      "name": "cancel, retry and late response do not revive a cancelled File",
+      "passed": true
+    },
+    {
+      "name": "responsive widths have no horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "separate frame receivers record, but do not overstate, transfer results",
+      "passed": true
+    },
+    {
+      "name": "no JavaScript runtime errors",
+      "passed": true
+    }
+  ],
+  "dragObservations": [
+    {
+      "test": "same-document trusted pointer drag",
+      "events": [
+        {
+          "event": "dragstart",
+          "trusted": true,
+          "count": 1,
+          "types": [
+            "Files"
+          ],
+          "name": "aurora.zip",
+          "size": 16789
+        },
+        {
+          "event": "drop",
+          "trusted": true,
+          "count": 0,
+          "types": [
+            "text/plain"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "same-origin frames (not tabs)",
+      "sourceEvents": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "count": 1,
+          "types": [
+            "Files"
+          ]
+        },
+        {
+          "type": "dragend",
+          "trusted": true,
+          "count": 0,
+          "types": [
+            "Files"
+          ]
+        }
+      ],
+      "receiverEvents": [
+        {
+          "type": "drop",
+          "trusted": true,
+          "count": 0,
+          "types": [
+            "text/plain"
+          ]
+        }
+      ],
+      "receiverStatus": "No File reached this receiver. The browser may have stripped file data, or the drag carried something else. No game import has been established.",
+      "metadata": "Trusted drop: true\nReceiver origin: http://localhost:3000\nBrowser: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.0 Safari/537.36\nFile count: 0\nData types: text/plain"
+    },
+    {
+      "test": "cross-origin frames (not tabs)",
+      "sourceEvents": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "count": 1,
+          "types": [
+            "Files"
+          ]
+        },
+        {
+          "type": "dragend",
+          "trusted": true,
+          "count": 0,
+          "types": [
+            "Files"
+          ]
+        }
+      ],
+      "receiverEvents": [],
+      "receiverStatus": "Waiting for a real drop from the shader page.",
+      "metadata": ""
+    }
+  ],
+  "edgeTwoTabs": "NOT TESTED",
+  "bloxdImport": "NOT TESTED"
+}
