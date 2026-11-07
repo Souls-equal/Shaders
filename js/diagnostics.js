@@ -1,4 +1,4 @@
-import { SHADER_CONFIG } from './config.js';
+import { PACKS } from './config.js';
 import { formatBytes } from './shader-loader.js';
 
 const receiver = document.getElementById('receiver');
@@ -46,7 +46,7 @@ receiver.addEventListener('drop', async event => {
     if (files.length !== 1) throw new Error('Please drop exactly one shader ZIP at a time.');
     const file = files[0];
     lines.push('', `Name: ${file.name}`, `MIME: ${file.type || '(not supplied)'}`, `Size: ${file.size} bytes (${formatBytes(file.size)})`, `Real File: ${file instanceof File}`);
-    if (file.size > SHADER_CONFIG.maxSizeMB * 1024 * 1024 || !/\.zip$/i.test(file.name)) {
+    if (file.size > Math.max(1, ...PACKS.map(pack => pack.maxSizeMB)) * 1024 * 1024 || !/\.zip$/i.test(file.name)) {
       lines.push('Hash skipped: only ZIP files within the configured size limit are read.');
     } else if (!crypto.subtle) {
       lines.push('Hash unavailable: use HTTPS or localhost.');
@@ -54,7 +54,8 @@ receiver.addEventListener('drop', async event => {
       const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
       const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
       lines.push(`SHA-256: ${hash}`);
-      if (SHADER_CONFIG.sha256) lines.push(`Matches published pack: ${hash === SHADER_CONFIG.sha256.toLowerCase()}`);
+      const matches = PACKS.filter(pack => pack.sha256?.toLowerCase() === hash);
+      lines.push(`Matching published packs: ${matches.map(pack => `${pack.name} ${pack.version}`).join(', ') || '(none)'}`);
     }
     if (current !== generation) return;
     results.textContent = lines.join('\n');

@@ -1,166 +1,150 @@
 # Bloxd File Share
 
-Prototype statique de partage de Shader Packs pour Bloxd.io, en HTML/CSS/JavaScript ES modules, sans framework ni dépendance à l’exécution.
+Bibliothèque statique de packs pour Bloxd.io, en HTML/CSS/JavaScript moderne, sans framework ni dépendance à l’exécution. Trois catégories, un catalogue configurable et une fenêtre de récupération commune à chaque pack.
 
-> **État réel : préparation en mémoire opérationnelle ; importation dans Bloxd.io NON démontrée.** Un véritable `File` est attaché à un `dragstart` utilisateur. Dans les essais automatisés sous Chromium 141 headless, ce fichier n’était toutefois plus présent à la réception. Les tests entre **deux onglets Microsoft Edge** et dans **Bloxd.io** restent à effectuer. Ce projet ne prétend pas contourner cette limitation.
+> **Le téléchargement volontaire est désormais la méthode recommandée.** Un vrai `File` en mémoire n’est pas nécessairement transporté intact par le drag natif vers un autre onglet. Le glisser-déposer reste une expérience, pas une promesse d’import dans Bloxd.io.
 
-## Démarrage
+## Démarrer
 
 ```sh
-# Depuis la racine du dépôt, Python 3 suffit :
 python3 -m http.server 3000 --bind 0.0.0.0
-# Puis ouvrir http://localhost:3000
+# Ouvrir http://localhost:3000
 ```
 
-Sur Windows, utiliser `python` à la place de `python3` si nécessaire. Ne pas ouvrir `index.html` en `file://` : les modules et Fetch nécessitent un serveur HTTP. Utiliser HTTPS en production (notamment pour SHA-256 via Web Crypto). Node.js n’est nécessaire que pour les tests.
+Sous Windows, utiliser `python` si nécessaire. Ne pas ouvrir la page en `file://` : Fetch et les modules ES nécessitent un serveur. HTTPS en production, notamment pour Web Crypto/SHA-256. Node.js 22+ sert uniquement aux tests.
 
-## Utilisation
-
-1. **Prepare Shader** récupère `aurora.zip`, contrôle la réponse et crée un vrai `File` en mémoire. La progression est déterminée si la taille HTTP est disponible, sinon indéterminée avec les octets reçus.
-2. Une fois prêt, la zone propose un glisser-déposer **réellement initié par l’utilisateur**. Placer Bloxd.io à côté ou survoler son onglet pendant le drag, puis viser sa véritable zone d’import si elle existe. Aucune fonction interne du jeu n’est supposée ou injectée.
-3. Vérifier la réponse **dans le jeu**. Notre page n’a pas accès à l’état interne de Bloxd.io et ne transforme jamais `dragend`/`dropEffect` en « importation réussie ».
-4. **Clear File** annule aussi un chargement en cours, supprime la référence au `File` et révoque les éventuelles URL Blob. Le ramasse-miettes décide du moment exact de restitution de mémoire. Un transfert déjà confié au navigateur ne peut pas être révoqué rétroactivement.
-5. En cas de blocage, **Download instead** est le seul chemin de téléchargement : clic explicite, puis choix du fichier via le sélecteur natif du jeu, si disponible. Cette alternative écrit sur disque et ne respecte donc pas l’objectif strict « sans enregistrement » ; aucun substitut universel sans disque n’est annoncé.
-
-Un appui clavier sur la zone prête ouvre les explications ; il ne simule pas un drag. Le bouton de téléchargement explicite constitue l’alternative clavier/tactile.
-
-## Le pack inclus
-
-- **Aurora**, auteur **K4miNoK4mi**, tel qu’indiqué dans `aurora/pack.json`.
-- `aurora.zip` : **16 789 octets**, 8 entrées, manifeste `apiVersion: 5`.
-- SHA-256 : `f83f701ce164341fb41344ff0df502ff823ec1db92579101c22ed1ecdf1d91d4`.
-- Les deux ZIP préexistants restent **inchangés** ; `aurora - V9.zip` n’est pas utilisé par défaut.
-- L’image de paysage est une **illustration générée**, pas une capture vérifiée de ce shader dans Bloxd.io. Aucun résultat graphique en jeu n’est promis.
-
-## Configuration : un seul fichier
-
-Modifier uniquement l’objet de `js/config.js` pour changer le pack distribué :
-
-```js
-export const SHADER_CONFIG = Object.freeze({
-  name: 'My Custom Shader',
-  author: 'Creator',
-  description: 'Custom shader pack for Bloxd.io',
-  filename: 'my-shader.zip',
-  url: 'https://files.example.org/my-shader.zip',
-  maxSizeMB: 50,
-  expectedSizeBytes: undefined, // Facultatif ; sinon publier la taille exacte.
-  sha256: undefined,            // Facultatif ; recommandé pour une source distante.
-  allowedOrigins: ['https://files.example.org'],
-  timeoutMs: 45000,
-});
-```
-
-Le fichier n’est jamais encodé dans JavaScript. Le pack fourni est hébergé sur la même origine statique ; une source distante HTTPS est également prise en charge. Son origine exacte doit figurer dans `allowedOrigins` (sans slash final ni chemin) et son serveur doit autoriser CORS (`Access-Control-Allow-Origin`). Le mode `no-cors` est volontairement exclu, tout comme un proxy de contournement.
-
-**Remplacer également la taille et le SHA-256** lors d’un changement de fichier, ou enlever ces deux champs facultatifs. Une ancienne empreinte doit bloquer un nouveau ZIP. Calculer les valeurs sans extraction :
-
-```sh
-python3 -c "import pathlib,hashlib; p=pathlib.Path('aurora.zip'); print(p.stat().st_size); print(hashlib.sha256(p.read_bytes()).hexdigest())"
-```
-
-Le chemin d’URL doit se terminer par `.zip`. Les redirections sont refusées : configurer l’URL finale directe, pas un lien vers une page GitHub `blob/`. Une URL relative conserve la compatibilité avec les sous-répertoires GitHub Pages.
-
-## Contrôles et limites de sécurité
-
-- URL HTTPS distante, origine explicitement autorisée, absence d’identifiants dans l’URL ; HTTP même origine autorisé pour le développement.
-- `credentials: 'omit'`, `referrerPolicy: 'no-referrer'`, `redirect: 'error'`, contrôle du statut HTTP et de la provenance de la réponse.
-- Extension `.zip`, MIME ZIP ou binaire générique, puis vérification des **octets**. Un MIME manquant n’est pas une preuve et déclenche les mêmes contrôles structurels.
-- Limite de taille vérifiée sur l’en-tête si pertinent, puis **sur chaque chunk reçu**, même si `Content-Length` ment ou manque. Le flux est annulé en cas de dépassement. La taille HTTP compressée n’est pas confondue avec la taille du ZIP décodé.
-- Signature, fin de répertoire, bornes du répertoire central, en-têtes locaux, méthodes stockées/Deflate, chemins sans traversée ; maximum 1 024 entrées. Refus des archives vides, multiparties, chiffrées et ZIP64.
-- Taille publiée et SHA-256 facultatifs, contrôlés avant la création du `File`.
-- **Pas d’extraction**, pas d’exécution de contenu provenant du ZIP, pas de saisie de fichiers personnels sur la page principale, pas d’upload, pas d’analytics, pas de cache persistant de fichier ou de service worker.
-- La page de diagnostic lit uniquement le fichier que l’utilisateur lui dépose volontairement, pour afficher ses métadonnées et son hash, sans l’envoyer à un serveur.
-- La validation est **structurelle**, non une validation complète du format ZIP : elle ne décompresse pas les entrées, ne vérifie pas leur CRC, ne scanne pas les malwares et ne valide pas le contrat WGSL/Bloxd. Une empreinte correspondante prouve l’identité des octets attendus, **pas leur innocuité**.
-- La limite s’applique aux octets transférés, pas à la consommation totale de RAM. Blob, buffer de contrôle et hash peuvent temporairement multiplier la mémoire nécessaire. Certaines erreurs d’allocation sont signalables ; un onglet tué par le système pour manque de RAM ne peut pas afficher de message fiable.
-
-Les erreurs réseau/CORS/redirection sont regroupées honnêtement : Fetch ne permet généralement pas de les distinguer. Les erreurs 404, HTTP, MIME, ZIP, taille, intégrité, délai dépassé, annulation et allocation ont des messages adaptés. Un refus par le jeu doit être constaté dans le jeu, pas déduit du navigateur source.
-
-## Diagnostic de transfert
-
-Ouvrir **About compatibility → Open test receiver**, ou `diagnostics.html` dans un autre onglet. Déposer le fichier dans sa zone et relever :
-
-- l’authenticité de l’événement (`isTrusted`) ;
-- le nombre de fichiers, les types exposés, le nom, la taille et le SHA-256 ;
-- le navigateur et l’origine réceptrice.
-
-Le récepteur rejette les événements synthétiques. Tester ensuite le récepteur inchangé sur une **autre origine** : un succès sur la même origine ne démontre pas une possibilité de transfert vers Bloxd.io.
-
-### Limitation effectivement observée
-
-Le 7 novembre 2026, Chromium headless **141.0.7390.0** sous Linux, avec sécurité Web et isolation d’origine conservées :
-
-- `dragstart` réel : **1 File**, `aurora.zip`, 16 789 octets, type de transfert `Files` ;
-- réception dans le même document et dans une iframe de même origine : événement réel, **0 File**, type `text/plain` ;
-- iframe d’une autre origine : aucun événement `drop` observé.
-
-La réussite de `DataTransfer.items.add(file)` n’assure donc pas le transport du fichier dans cet environnement. La rupture observée se situe **après `dragstart`, avant l’exposition du fichier à `drop`**. On ne peut pas en déduire seul si le même comportement existe dans Edge graphique sur Windows, ni attribuer le cas cross-origin uniquement à une règle de sécurité : le mode headless et la chaîne d’entrée automatisée font partie des conditions d’essai. Voir [le rapport](docs/TEST_REPORT.md) et [les observations JSON](docs/chromium-141-evidence.json).
-
-Si Edge/Bloxd bloquent aussi la méthode, une page Web ne peut pas forcer la remise d’un fichier virtuel au jeu ni renseigner son `<input type="file">` à distance. Les options honnêtes sont un téléchargement **volontaire**, ou une future prise en charge explicite par Bloxd d’un import URL/flux. Aucun protocole interne, extension ou API d’import non documentée n’est inventé ici.
-
-## Tests
-
-### Tests du chargeur — sans dépendance
-
-```sh
-npm test
-```
-
-Node.js 22+, 24 tests : ZIP réel et invalide, MIME, taille annoncée/réelle, annulation, timeout, intégrité, origine, format et erreurs. Les allocations défaillantes et CORS sont simulés ; ce ne sont pas des essais destructifs de RAM ou d’un serveur CORS tiers.
-
-### Tests navigateur facultatifs
-
-```sh
-npm ci
-npx playwright install --with-deps chromium
-# Lancer le serveur local dans un autre terminal, puis :
-npm run test:browser
-```
-
-15 contrôles couvrent les états UI, les erreurs, le nettoyage, l’absence de téléchargement lors de la préparation, le téléchargement de secours explicite, les dialogues, le responsive (320–1440 px) et les événements de drag utilisateur. Le script **consigne** les résultats de transfert, sans assimiler un test terminé à un transfert réussi. Il ne crée aucun événement DragEvent synthétique. Les sorties sont ignorées dans `test-results/`.
-
-Variables facultatives : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (`msedge` pour un Edge installé), `TEST_BASE_URL`, `TEST_RECEIVER_ORIGIN`. `PLAYWRIGHT_MODULE_PATH` peut pointer vers le `package.json` d’une installation externe de Playwright. Même exécuté avec Edge, le harnais de frames ne remplace pas le test manuel entre deux onglets.
-
-La liste complète des tests manuels obligatoires, y compris Edge et Bloxd.io, est dans [docs/TEST_REPORT.md](docs/TEST_REPORT.md).
-
-## Déploiement statique
-
-### GitHub Pages
-
-Dans les réglages Pages du dépôt, publier la racine (`/`) de la branche de déploiement choisie par le mainteneur. Aucun build n’est nécessaire. `.nojekyll` est fourni. Les ressources utilisent des chemins relatifs compatibles avec `https://utilisateur.github.io/Shaders/`.
-
-### Netlify
-
-Importer le dépôt ou déployer son contenu statique. Répertoire de publication : `.` ; **aucune commande de build**. Le fichier `netlify.toml` fournit les types ZIP, des en-têtes de sécurité et la revalidation des scripts/archives. Aucun en-tête `Content-Disposition: attachment` n’est nécessaire pour Fetch.
-
-Seuls `index.html`, `diagnostics.html`, `.nojekyll`, `css/`, `js/`, `assets/` et le ZIP configuré sont nécessaires au déploiement. Les tests, Node.js et le serveur Python ne sont pas des dépendances de production. Aucune publication sur un compte externe n’a été réalisée par ce prototype.
-
-## Architecture
+## Organisation des fichiers
 
 ```text
 .
-├── index.html                  # Galerie et préparation
-├── diagnostics.html            # Récepteur de vrais drops
-├── css/style.css               # Thème sombre, responsive, reduced-motion
+├── shaders/
+│   ├── aurora-v12.zip           # Ancien « aurora - 12.zip »
+│   ├── aurora-v9.zip            # Ancien « aurora - V9.zip »
+│   └── aurora-original.zip      # Ancien « aurora.zip »
+├── schems/                     # Schematics à publier
+├── t-packs/                    # Texture packs à publier
+├── index.html                  # Catalogue et fenêtre de récupération
+├── diagnostics.html            # Récepteur de vrais glisser-déposer
+├── css/style.css
 ├── js/
-│   ├── config.js               # Seul point de configuration du pack
-│   ├── shader-loader.js        # Fetch, flux borné, validation, Blob et File
-│   ├── drag-drop.js            # Capacités locales et drag natif
-│   ├── app.js                  # États UI, annulation et libération
-│   └── diagnostics.js          # Métadonnées côté réception uniquement
-├── assets/                     # Illustration, police locale, icône
-├── aurora.zip                  # Archive originale distribuée
-├── aurora - V9.zip             # Autre archive originale, non utilisée
-├── tests/shader-loader.test.js
-├── tools/browser-check.mjs
-├── docs/                       # Rapport et observations de tests
-├── netlify.toml
-├── package.json                # Outils de test uniquement
-└── README.md
+│   ├── config.js               # Catégories et catalogue PACKS
+│   ├── app.js                  # Filtres, cartes, fenêtre, téléchargement et nettoyage
+│   ├── shader-loader.js        # Chargeur ZIP partagé : flux borné, Blob, File
+│   ├── drag-drop.js             # Drag natif, jamais simulé
+│   └── diagnostics.js          # Métadonnées et hash à la réception
+├── assets/                     # Illustration et police locales
+├── tests/                      # Tests Node sans dépendance
+├── tools/browser-check.mjs      # Contrôles UI et téléchargements Playwright
+├── docs/                       # Rapport et observations
+└── netlify.toml
 ```
 
-Pour ajouter textures/schematics : conserver le chargement et le transport de `File` séparés de l’UI, puis introduire une configuration de type de ressource et un validateur spécifique. Les badges « Soon » ne sont pas des fonctionnalités actives.
+Les trois archives ont été déplacées/renommées **sans modifier leurs octets**. Les anciens chemins à la racine ne sont plus utilisés. Les dossiers vides `schems/` et `t-packs/` sont conservés avec `.gitkeep`.
 
-## Crédits et affiliation
+### Catalogue actuel
 
-Licence du dépôt : [Apache-2.0](LICENSE). Police DM Sans auto-hébergée, sous [SIL Open Font License](assets/FONT-LICENSE.txt). Illustration créée pour ce prototype. Attribution du pack reprise de son manifeste, sans promesse de compatibilité ou de résultat visuel. Projet indépendant, sans affiliation officielle avec Bloxd.io.
+Auteur déclaré dans les trois manifestes : **K4miNoK4mi**, nom **Aurora**, `apiVersion: 5`.
+
+| Version | Chemin | Taille réelle | SHA-256 |
+|---|---|---:|---|
+| V12, mise en avant | `shaders/aurora-v12.zip` | 17 036 octets | `4592bfadf6d1662607afdcef290961796af0676f29a561e97873ec90217b2100` |
+| V9, archive | `shaders/aurora-v9.zip` | 15 703 octets | `b809e83196b9d5197eea8bbf5346e05a30fd677bb90c66677cc37c4146954bab` |
+| Original, version non confirmée | `shaders/aurora-original.zip` | 16 789 octets | `f83f701ce164341fb41344ff0df502ff823ec1db92579101c22ed1ecdf1d91d4` |
+
+L’archive d’origine n’a pas de numéro confirmé : elle n’est pas rebaptisée arbitrairement V10 ou V11. Les catégories Schematics et Texture packs n’ont pas encore de contenu ; le site l’indique au lieu de présenter de faux packs. L’image est une illustration, **pas une capture vérifiée d’Aurora dans le jeu**.
+
+## Récupérer un pack
+
+1. Sélectionner **Shaders**, **Schematics** ou **Texture packs**.
+2. Cliquer **Obtenir le pack** sur la version souhaitée. Cela ouvre une fenêtre accessible (focus, Escape, fermeture par la croix ou le fond), **sans télécharger ni même récupérer l’archive**.
+3. Choisir une méthode :
+   - **Télécharger le ZIP**, recommandé : récupère les octets, vérifie la source, la taille, la structure ZIP et le SHA-256, puis lance un téléchargement uniquement parce que l’utilisateur l’a demandé. Le fichier porte un nom distinct pour chaque version. Le sélectionner ensuite dans le véritable importeur du jeu.
+   - **Essayer le glisser-déposer**, expérimental : déplier cette option, puis cliquer **Préparer en mémoire**. Aucun enregistrement sur disque. Un vrai geste de souris peut ensuite attacher ce `File` au drag, mais sa réception par le jeu reste non garantie.
+4. **Annuler le chargement**, **Libérer le fichier** ou fermer la fenêtre pour abandonner la requête et libérer les références/URL temporaires. Un changement de pack ne réutilise jamais les octets d’une autre version.
+
+Un fichier déjà préparé peut être téléchargé sans être récupéré une deuxième fois, toujours sur clic volontaire. L’ouverture de la fenêtre, le filtrage et la préparation en mémoire ne déclenchent aucun téléchargement. Le navigateur décide de l’emplacement d’enregistrement et peut demander confirmation. La page ne peut ni confirmer l’application du pack dans le jeu, ni annuler un téléchargement déjà confié au navigateur.
+
+## Ajouter un futur pack
+
+1. Déposer l’archive dans le dossier approprié : `shaders/`, `schems/` ou `t-packs/`.
+2. Calculer sa taille et son hash :
+
+```sh
+python3 -c "import pathlib,hashlib; p=pathlib.Path('shaders/mon-pack.zip'); print(p.stat().st_size); print(hashlib.sha256(p.read_bytes()).hexdigest())"
+```
+
+3. Ajouter une entrée à `PACKS` dans `js/config.js` :
+
+```js
+Object.freeze({
+  ...DEFAULTS,
+  id: 'mon-pack-v1',             // Unique, stable.
+  category: 'shaders',           // 'shaders', 'schems' ou 't-packs'.
+  name: 'Mon pack',
+  version: 'V1',
+  author: 'Créateur',
+  description: 'Description du pack.',
+  filename: 'mon-pack.zip',
+  url: './shaders/mon-pack.zip',
+  expectedSizeBytes: 12345,       // Remplacer par la taille réelle.
+  sha256: 'EMPREINTE_SHA256_REELLE_DE_64_CARACTERES',
+  // featured: true,             // Facultatif : carte avec illustration.
+}),
+```
+
+**Remplacer les valeurs d’exemple avant publication.** Le filtre, le compteur, la carte et les deux options de la fenêtre sont générés à partir du catalogue : aucune modification de HTML ou de gestionnaire de téléchargement n’est nécessaire. Un site statique ne peut pas énumérer arbitrairement les fichiers du serveur ; déposer un fichier seul ne suffit donc pas à le publier dans le catalogue.
+
+Le chargeur actuel est volontairement limité aux **archives ZIP**, quelle que soit leur catégorie. Ajouter des schematics bruts dans un autre format nécessitera un validateur approprié ; ne pas simplement renommer leur extension en `.zip`. Le format et la structure attendus par l’importeur Bloxd doivent être vérifiés séparément. La présence d’une catégorie ne prétend pas rendre n’importe quel fichier compatible avec le jeu.
+
+Pour une source distante, configurer son URL HTTPS finale et son origine exacte dans `allowedOrigins`. Le serveur doit autoriser CORS. Les redirections sont refusées : ne pas utiliser une page GitHub `blob/`. Une URL relative garde la compatibilité avec les sous-répertoires GitHub Pages.
+
+## Pourquoi le drag peut ne pas fonctionner
+
+`new File([blob], ...)` crée bien un objet `File`, et `DataTransfer.items.add(file)` peut bien l’accepter pendant `dragstart`. Cela ne garantit pas que le mécanisme natif du navigateur le sérialise et le transmette comme fichier au récepteur.
+
+Dans les essais Chromium headless 141 disponibles, un `File` réel était présent au départ, mais un récepteur du même document recevait zéro fichier. L’essai historique entre frames même origine montrait aussi zéro fichier ; une frame cross-origin ne recevait aucun drop. Le retour utilisateur signale également un échec dans Bloxd.io. La cause exacte de ce dernier ne peut pas être établie sans observer le récepteur du jeu ; ni ces essais ni un simple `dropEffect: copy` ne prouvent un import réussi.
+
+`diagnostics.html` permet de déposer un fichier par une vraie interaction et de voir le nombre de fichiers reçus, leur nom, leur taille et leur SHA-256. Le hash est comparé à **toutes les versions publiées**, pas seulement à une valeur unique. Le récepteur ne téléverse, n’extrait et n’exécute rien. Il ignore les événements synthétiques.
+
+Pour tester Edge : ouvrir le catalogue et le récepteur dans deux onglets réels, préparer un pack depuis sa fenêtre, puis le glisser dans le récepteur. Refaire sur une origine différente, puis dans le vrai Bloxd.io. Voir la [procédure et les limites](docs/TEST_REPORT.md).
+
+**Alternative : télécharger volontairement puis utiliser le sélecteur natif du jeu.** Cela abandonne explicitement l’objectif initial sans disque. Sans prise en charge coopérative par le jeu, cette page ne peut pas forcer un fichier dans un autre onglet ni remplir son `<input type="file">`. Aucune API privée, extension, désactivation de sécurité ou simulation d’événement n’est utilisée.
+
+## Sécurité et mémoire
+
+- Origine autorisée, HTTPS distant, `credentials: 'omit'`, aucune redirection ni réponse opaque.
+- Contrôle HTTP/MIME, extension ZIP et octets réels ; une extension n’est jamais une preuve suffisante.
+- Limite de taille sur l’en-tête si exploitable, puis sur **chaque chunk reçu**, même si `Content-Length` est absent ou mensonger ; progression indéterminée si nécessaire.
+- Contrôle de la signature, des bornes du répertoire ZIP et des en-têtes locaux, méthodes stockées/Deflate, refus des chemins dangereux, archives chiffrées/multiparties/ZIP64 ; 1 024 entrées maximum.
+- Taille publiée et SHA-256 vérifiés avant de fournir un fichier. Les contrôles sont structurels : **ni analyse antivirus, ni vérification CRC par décompression, ni validation WGSL/Bloxd**.
+- Pas d’extraction, d’exécution de scripts du ZIP, d’upload, d’analytics, de cache persistant du fichier ou d’accès aux fichiers personnels sur la page catalogue.
+- La limite par défaut est de 50 MiB de ZIP ; la RAM totale peut être supérieure pendant la validation. Les erreurs d’allocation récupérables sont signalées ; un onglet tué par le système ne peut pas afficher d’erreur fiable.
+- Fermeture/annulation : requête abandonnée, réponses tardives ignorées par génération, référence supprimée, URL Blob révoquée. Le garbage collector contrôle le moment exact de restitution de RAM. Un drag déjà confié au navigateur ne peut pas être retiré rétroactivement.
+- Les erreurs réseau/CORS/redirection peuvent être indiscernables avec Fetch ; le site ne prétend pas identifier une cause que le navigateur ne révèle pas.
+
+## Tests
+
+```sh
+npm test                        # Node 22+, sans dépendance : 29 tests.
+
+# Contrôles navigateur facultatifs ; serveur local déjà lancé :
+npm ci
+npx playwright install --with-deps chromium
+npm run test:browser            # 20 contrôles UI, téléchargements et erreurs.
+```
+
+Le script navigateur vérifie entre autres les octets téléchargés des trois versions, l’absence de téléchargement à l’ouverture/préparation, l’annulation/fermeture pendant le chargement, la non-réutilisation d’un autre pack, la navigation clavier et l’affichage mobile. Des entrées ZIP de schematics/texture packs **uniquement injectées dans les tests** vérifient la réutilisation de la même fenêtre ; aucun faux pack n’est publié sur le site.
+
+Les sorties sont dans `test-results/` (ignoré par Git). Les observations conservées sont dans `docs/catalogue-browser-evidence.json`. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
+
+## Hébergement
+
+**GitHub Pages** : publier la racine de la branche de déploiement choisie par le mainteneur. Aucun build ; `.nojekyll` est fourni. Les chemins relatifs fonctionnent sous `https://utilisateur.github.io/Shaders/`.
+
+**Netlify** : répertoire de publication `.`, aucune commande de build. `netlify.toml` fournit les types ZIP et les en-têtes de sécurité. Ne pas imposer un téléchargement automatique par navigation ou ajouter un script de redirection vers l’archive.
+
+Déployer `index.html`, `diagnostics.html`, `css/`, `js/`, `assets/` et les dossiers de packs. Les tests, Python et Node ne sont pas des dépendances de production. Aucun déploiement sur un compte externe n’est réalisé automatiquement.
+
+## Crédits
+
+[Apache-2.0](LICENSE) pour le dépôt. Police DM Sans auto-hébergée sous [SIL Open Font License](assets/FONT-LICENSE.txt). Illustration créée pour le prototype, non capture d’écran du jeu. Attribution Aurora reprise des manifestes. Projet indépendant, sans affiliation officielle avec Bloxd.io.

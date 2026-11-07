@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-11-07T11:17:53.334Z",
+  "browser": "141.0.7390.0",
+  "results": [
+    {
+      "name": "three category tabs, real versions, V12 featured; no eager fetch or download",
+      "passed": true
+    },
+    {
+      "name": "category switching and arrow/Home/End keys show honest empty states",
+      "passed": true
+    },
+    {
+      "name": "opening a pack only opens the modal; Escape restores focus",
+      "passed": true
+    },
+    {
+      "name": "V12: explicit download has correct filename and byte-identical archive",
+      "passed": true
+    },
+    {
+      "name": "V9: explicit download has correct filename and byte-identical archive",
+      "passed": true
+    },
+    {
+      "name": "Original: explicit download has correct filename and byte-identical archive",
+      "passed": true
+    },
+    {
+      "name": "experimental preparation is opt-in and never auto-downloads",
+      "passed": true
+    },
+    {
+      "name": "trusted pointer drag carries the selected File at departure; outcome stays unknown",
+      "passed": true
+    },
+    {
+      "name": "prepared file can be downloaded without a second fetch; clear revokes and disables drag",
+      "passed": true
+    },
+    {
+      "name": "HTTP 404 is shown with no download",
+      "passed": true
+    },
+    {
+      "name": "HTML MIME is rejected",
+      "passed": true
+    },
+    {
+      "name": "fake ZIP bytes are rejected",
+      "passed": true
+    },
+    {
+      "name": "oversized declared response is rejected",
+      "passed": true
+    },
+    {
+      "name": "network failure gives a network/CORS message",
+      "passed": true
+    },
+    {
+      "name": "closing during a download request cancels it; another version never receives stale bytes",
+      "passed": true
+    },
+    {
+      "name": "cancel loading then retry downloads only after a new explicit request",
+      "passed": true
+    },
+    {
+      "name": "future schematics/texture ZIP entries use the same category and acquisition dialog",
+      "passed": true
+    },
+    {
+      "name": "responsive catalogue and expanded modal have no horizontal overflow at 320–1440px",
+      "passed": true
+    },
+    {
+      "name": "diagnostic receiver loads the catalogue and its reset control works",
+      "passed": true
+    },
+    {
+      "name": "no JavaScript runtime errors",
+      "passed": true
+    }
+  ],
+  "dragObservations": [
+    {
+      "test": "same-document trusted pointer drag, not Edge tabs or Bloxd.io",
+      "events": [
+        {
+          "type": "dragstart",
+          "trusted": true,
+          "count": 1,
+          "name": "aurora-v12.zip",
+          "size": 17036
+        },
+        {
+          "type": "drop",
+          "trusted": true,
+          "count": 0,
+          "types": [
+            "text/plain"
+          ]
+        }
+      ]
+    }
+  ],
+  "edgeTwoTabs": "NOT TESTED",
+  "bloxdImport": "NOT TESTED"
+}
