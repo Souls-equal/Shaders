@@ -9,7 +9,19 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 [[headers]]
-  for = "/*.zip"
+  for = "/shaders/*.zip"
+  [headers.values]
+    Content-Type = "application/zip"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/schems/*.zip"
+  [headers.values]
+    Content-Type = "application/zip"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/t-packs/*.zip"
   [headers.values]
     Content-Type = "application/zip"
     Cache-Control = "public, max-age=0, must-revalidate"

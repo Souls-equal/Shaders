@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { SHADER_CONFIG } from '../js/config.js';
+import { PACKS } from '../js/config.js';
 import { loadShader, validateConfig, validateZip, formatBytes } from '../js/shader-loader.js';
 
-const zip = new Uint8Array(await readFile(new URL('../aurora.zip', import.meta.url)));
+const zip = new Uint8Array(await readFile(new URL('../shaders/aurora-original.zip', import.meta.url)));
 const baseURL = 'https://share.example/project/';
-const config = { ...SHADER_CONFIG, url: './aurora.zip' };
+const config = { ...PACKS.find(pack => pack.id === 'aurora-original'), filename: 'aurora.zip', url: './aurora.zip' };
 const response = (bytes = zip, headers = {}) => new Response(bytes, { headers: { 'content-type': 'application/zip', ...headers } });
 const load = (configPatch = {}, options = {}) => loadShader({ ...config, ...configPatch }, { baseURL, fetchImpl: async () => response(), ...options });
 const rejectsCode = (promise, code) => assert.rejects(promise, error => error.code === code);
@@ -14,7 +14,7 @@ const rejectsCode = (promise, code) => assert.rejects(promise, error => error.co
 // Real checked-in archives, not invented ZIP header strings.
 test('original Aurora ZIPs pass non-extracting structural checks', async () => {
   assert.deepEqual(validateZip(zip), { entries: 8 });
-  assert.deepEqual(validateZip(new Uint8Array(await readFile(new URL('../aurora - V9.zip', import.meta.url)))), { entries: 8 });
+  assert.deepEqual(validateZip(new Uint8Array(await readFile(new URL('../shaders/aurora-v9.zip', import.meta.url)))), { entries: 8 });
 });
 test('normal load returns actual File with exact original bytes and progress', async () => {
   const progress = [];

@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101116">
-  <meta name="description" content="Prepare Aurora for Bloxd.io in memory. An experimental, no-auto-download shader sharing prototype.">
+  <meta name="description" content="Shaders, schematics et texture packs pour Bloxd.io. Retrouvez Aurora V12 et choisissez comment récupérer votre pack.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'none'">
-  <title>Bloxd File Share — Your shaders, ready to play.</title>
+  <title>Bloxd File Share — Vos packs, prêts à jouer.</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
@@ -15,6 +15,7 @@
 <body>
   <svg class="svg-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
     <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 9 5v9l-9 5-9-5V8l9-5Z M3 8l9 5 9-5 M12 13v9 M7.5 5.5l9 5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
     <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></symbol>
     <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6ZM14 3v6h6M9 8h1m-1 3h1m-1 3h1m-1 3h1"/></symbol>
@@ -22,75 +23,48 @@
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
     <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6m4-6v6"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
-    <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 5v-4c0-1 .2-2-1-3 4 0 7-2 7-6a5 5 0 0 0-1-3 5 5 0 0 0 0-4s-2 0-4 2a13 13 0 0 0-8 0C6 2 4 2 4 2a5 5 0 0 0 0 4 5 5 0 0 0-1 3c0 4 3 6 7 6-1 1-1 2-1 3v4"/></symbol>
   </defs></svg>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="header">
-    <div class="header-inner">
-      <a class="brand" href="./" aria-label="Bloxd File Share home"><span class="brand-icon"><svg><use href="#i-cube"/></svg></span><span>BLOXD<span class="brand-light"> FILE SHARE</span></span></a>
-      <nav class="main-nav" aria-label="Main navigation">
-        <a class="nav-active" href="#shaders" aria-current="page">Shader packs</a>
-        <a href="#how-it-works">How it works</a>
-      </nav>
-      <a class="github-link" aria-label="View project on GitHub" href="https://github.com/Souls-equal/Shaders" target="_blank" rel="noopener noreferrer"><svg><use href="#i-github"/></svg><span>GitHub</span><svg class="small-icon"><use href="#i-external"/></svg></a>
-    </div>
-  </header>
+  <a class="skip-link" href="#main">Aller au contenu</a>
+  <header class="header"><div class="header-inner">
+    <a class="brand" href="./" aria-label="Bloxd File Share, accueil"><span class="brand-icon"><svg aria-hidden="true"><use href="#i-cube"/></svg></span><span>BLOXD<span class="brand-light"> FILE SHARE</span></span></a>
+    <nav class="main-nav" aria-label="Navigation principale"><a class="nav-active" href="#collection">La collection</a><a href="#how-it-works">Comment ça marche</a></nav>
+    <a class="github-link" href="https://github.com/Souls-equal/Shaders" target="_blank" rel="noopener noreferrer">GitHub <svg aria-hidden="true"><use href="#i-external"/></svg></a>
+  </div></header>
   <main id="main" class="page-shell">
     <section class="hero" aria-labelledby="hero-title">
-      <div class="eyebrow"><span class="status-dot"></span> LESS DOWNLOADING. MORE PLAYING.</div>
-      <h1 id="hero-title">Your shaders,<br class="mobile-break"> <span>ready to play.</span></h1>
-      <p>Share and import Bloxd shader packs without manually downloading files.<br class="desktop-break"> Prepare a pack, grab it, and try it in your world.</p>
-      <div class="hero-tags"><span><svg><use href="#i-shield"/></svg> In-memory preparation</span><span class="tag-divider"></span><span><svg><use href="#i-cube"/></svg> Made for Bloxd.io</span><span class="tag-divider"></span><span class="experimental-tag">Experimental prototype</span></div>
+      <div class="eyebrow"><span class="status-dot"></span> VOTRE MONDE. VOTRE TOUCHE.</div>
+      <h1 id="hero-title">Vos packs, <span>prêts à jouer.</span></h1>
+      <p>Une nouvelle lumière, de nouvelles textures, de nouvelles idées.<br>Retrouvez vos fichiers Bloxd.io au même endroit.</p>
+      <div class="hero-tags"><span><svg aria-hidden="true"><use href="#i-download"/></svg> Téléchargement à la demande</span><span class="tag-divider"></span><span><svg aria-hidden="true"><use href="#i-shield"/></svg> Archives originales vérifiées</span></div>
     </section>
-    <section id="shaders" aria-labelledby="collection-title">
-      <div class="section-heading"><h2 id="collection-title">The shader collection <span class="count-badge">01</span></h2><span class="section-caption"><span class="status-dot"></span> A new look for your world</span></div>
-      <div class="workspace">
-        <article class="shader-card">
-          <div class="shader-art">
-            <img src="assets/aurora-landscape.webp" alt="Illustrative voxel mountain valley with pine trees, reflective water and a lavender sunset. Not an in-game screenshot." width="1536" height="1024" fetchpriority="high">
-            <div class="art-top"><span class="art-badge"><svg><use href="#i-spark"/></svg> FEATURED PACK</span><span class="zip-badge">.ZIP</span></div>
-            <div class="art-bottom"><span class="art-wordmark" id="art-pack-name">AURORA<span>A different kind of atmosphere.</span></span><span class="preview-label">Illustrative preview</span></div>
-          </div>
-          <div class="shader-info">
-            <div class="shader-title-line"><h3 id="pack-name">Aurora</h3><span class="category-badge">Shader pack</span></div>
-            <p class="author">Created by <span id="pack-author">K4miNoK4mi</span><svg><use href="#i-cube"/></svg></p>
-            <p id="pack-description" class="pack-description">A fresh perspective on your favorite world. Warm light, richer colors, and a little more atmosphere.</p>
-            <div class="pack-specs"><span><svg><use href="#i-file"/></svg><span id="pack-format">ZIP archive</span></span><span><svg><use href="#i-download"/></svg><span id="pack-size">Checking size…</span></span><span><span class="tiny-dot"></span> In-memory ZIP</span></div>
-          </div>
-          <div class="card-foot"><span><svg><use href="#i-shield"/></svg> Original pack. No extraction. No auto-download.</span><button class="text-button" id="details-button" type="button">Pack details <svg><use href="#i-arrow"/></svg></button></div>
-        </article>
-        <aside class="transfer-panel" aria-labelledby="transfer-title">
-          <div class="panel-header"><span class="panel-heading-icon"><svg><use href="#i-spark"/></svg></span><div><h2 id="transfer-title">From here to your world.</h2><p>Your pack, without the extra steps.</p></div></div>
-          <div class="prepare-step"><div class="step-label"><span class="step-number">1</span><h3>Prepare your shader</h3><span id="prepare-check" class="step-check" hidden><svg><use href="#i-check"/></svg></span></div><p>Load the ZIP into your browser’s memory.<br>No files saved to your device.</p>
-            <button class="primary-button" id="prepare-button" type="button"><svg id="prepare-icon"><use href="#i-spark"/></svg><span id="prepare-label">Prepare Shader</span><svg class="button-arrow"><use href="#i-arrow"/></svg></button>
-            <div class="progress-section" id="progress-section" hidden><div class="progress-text"><span id="progress-label">Fetching pack…</span><span id="progress-value">0%</span></div><progress id="load-progress" max="100" value="0" aria-label="Shader loading progress"></progress></div>
-          </div>
-          <div class="step-separator"></div>
-          <div class="drag-step"><div class="step-label"><span class="step-number">2</span><h3>Drag it into Bloxd.io</h3><span class="memory-state" id="memory-state">Not prepared</span></div>
-            <div class="drag-zone" id="drag-zone" draggable="false" tabindex="0" role="group" aria-label="Shader file transfer" aria-disabled="true" aria-describedby="drag-hint">
-              <div class="file-icon"><svg><use href="#i-file"/></svg><span>ZIP</span></div>
-              <strong id="drag-title">Your shader will appear here</strong><span id="drag-subtitle">Prepare the pack to unlock drag & drop</span><span class="drag-grip" aria-hidden="true">⠿</span>
-            </div>
-            <div class="memory-row"><span><span class="status-dot" id="memory-dot"></span><span id="memory-label">Waiting for a file</span></span><button class="text-button clear-button" id="clear-button" type="button" disabled><svg><use href="#i-trash"/></svg><span>Clear File</span></button></div>
-          </div>
-          <div class="compatibility-note"><svg><use href="#i-info"/></svg><p><strong>A quick heads-up</strong><span id="drag-hint">The browser may strip in-memory files during a drag. Edge cross-tab transfer and Bloxd.io import are not yet verified.</span><button class="inline-link" id="compatibility-button" type="button">About compatibility <span aria-hidden="true">↗</span></button></p></div>
-          <div id="app-message" class="app-message" role="status" aria-live="polite" hidden></div>
-          <div class="fallback-row" id="fallback-row" hidden><span>Drag & drop not working?</span><button class="inline-link" id="download-button" type="button">Download instead <svg><use href="#i-download"/></svg></button></div>
-        </aside>
-      </div>
-      <div class="workspace-under"><span><svg><use href="#i-shield"/></svg> Your files stay yours. We never access your personal files.</span><a href="https://bloxd.io" target="_blank" rel="noopener noreferrer">Open Bloxd.io <svg><use href="#i-external"/></svg></a></div>
+    <section id="collection" aria-labelledby="collection-title">
+      <div class="collection-heading"><div><span class="eyebrow">LA BIBLIOTHÈQUE COMMUNAUTAIRE</span><h2 id="collection-title">À chaque monde, son pack.</h2></div><span class="library-note">Sans compte. Sans installation.</span></div>
+      <div class="category-bar"><div id="category-tabs" class="category-tabs" role="tablist" aria-label="Type de pack"></div><span class="category-description" id="category-description"></span></div>
+      <div id="catalog-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-shaders"><div id="pack-grid" class="pack-grid"></div></div>
+      <p class="library-status" id="library-status" role="status" aria-live="polite"></p>
+      <div class="library-foot"><span><svg aria-hidden="true"><use href="#i-shield"/></svg> Aucun fichier personnel consulté. Aucun téléchargement automatique.</span><a href="https://bloxd.io" target="_blank" rel="noopener noreferrer">Ouvrir Bloxd.io <svg aria-hidden="true"><use href="#i-external"/></svg></a></div>
     </section>
-    <section class="how-section" id="how-it-works" aria-labelledby="how-title"><div class="how-heading"><span class="eyebrow">SMALL STEPS. BIG DIFFERENCE.</span><h2 id="how-title">A better way to bring your world to life.</h2><p>No installation. No account. Just your next favorite shader.</p></div><div class="how-grid">
-      <article class="how-card"><span class="how-icon"><svg><use href="#i-spark"/></svg></span><span class="how-number">01</span><h3>Find your atmosphere</h3><p>Start with Aurora, our first featured shader pack. A whole new perspective on familiar blocks.</p></article>
-      <article class="how-card"><span class="how-icon"><svg><use href="#i-file"/></svg></span><span class="how-number">02</span><h3>Prepare, don’t download</h3><p>We fetch and check the ZIP, then keep a real file in memory. Nothing lands in your Downloads.</p></article>
-      <article class="how-card"><span class="how-icon"><svg><use href="#i-external"/></svg></span><span class="how-number">03</span><h3>Give it a drag</h3><p>Open Bloxd.io alongside this page and try its import area. Browser restrictions may require a manual download.</p></article>
+    <section class="how-section" id="how-it-works" aria-labelledby="how-title"><span class="eyebrow">DU PACK À VOTRE MONDE</span><h2 id="how-title">Votre prochain univers, en trois étapes.</h2><div class="how-grid">
+      <article class="how-card"><span class="how-icon"><svg aria-hidden="true"><use href="#i-layers"/></svg></span><span class="how-number">01</span><h3>Trouvez votre style</h3><p>Choisissez une catégorie et la version qui vous plaît. Chaque archive garde son identité.</p></article>
+      <article class="how-card"><span class="how-icon"><svg aria-hidden="true"><use href="#i-download"/></svg></span><span class="how-number">02</span><h3>Choisissez comment l’obtenir</h3><p>La fenêtre du pack propose le téléchargement ou un essai de glisser-déposer en mémoire.</p></article>
+      <article class="how-card"><span class="how-icon"><svg aria-hidden="true"><use href="#i-cube"/></svg></span><span class="how-number">03</span><h3>Importez dans le jeu</h3><p>Utilisez l’importeur de Bloxd.io. Le jeu reste seul juge de la compatibilité de votre fichier.</p></article>
     </div></section>
-    <section class="coming-next"><div class="coming-icon"><svg><use href="#i-cube"/></svg></div><div><h2>More ways to make it yours.</h2><p>One little tool. A bigger world of possibilities.</p></div><div class="coming-pills"><span>Texture packs <small>SOON</small></span><span>Schematics <small>SOON</small></span></div></section>
+    <aside class="browser-note"><span class="note-icon"><svg aria-hidden="true"><use href="#i-info"/></svg></span><div><h2>Pourquoi le glisser-déposer peut échouer ?</h2><p>Un vrai fichier en mémoire ne garantit pas son transfert entre deux pages. Le navigateur peut en retirer le contenu avant que Bloxd le reçoive. Privilégiez le téléchargement, puis le sélecteur de fichiers du jeu.</p><a href="diagnostics.html" target="_blank" rel="noopener noreferrer">Tester ce que reçoit un autre onglet <span aria-hidden="true">↗</span></a></div></aside>
   </main>
-  <footer class="footer"><div class="footer-inner"><a class="footer-brand" href="./"><svg><use href="#i-cube"/></svg>BLOXD FILE SHARE <span>Built for the community.</span></a><p>An independent project. Not affiliated with Bloxd.io.</p><a href="https://github.com/Souls-equal/Shaders" target="_blank" rel="noopener noreferrer">Open source <svg><use href="#i-external"/></svg></a></div></footer>
-  <dialog id="info-dialog" aria-labelledby="dialog-title"><div class="dialog-heading"><span class="eyebrow">BLOXD FILE SHARE</span><button class="close-button" id="close-dialog" type="button" aria-label="Close dialog">×</button></div><div id="dialog-content"></div></dialog>
-  <noscript><div class="noscript-note">Enable JavaScript to prepare a shader in memory. No files have been downloaded.</div></noscript>
+  <footer class="footer"><div class="footer-inner"><a class="footer-brand" href="./"><svg aria-hidden="true"><use href="#i-cube"/></svg>BLOXD FILE SHARE</a><p>Un projet indépendant, non affilié à Bloxd.io.</p><a href="https://github.com/Souls-equal/Shaders" target="_blank" rel="noopener noreferrer">Open source ↗</a></div></footer>
+
+  <dialog id="pack-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-intro">
+    <div class="dialog-heading"><span class="eyebrow">À VOUS DE CHOISIR</span><button class="close-button" id="close-dialog" type="button" aria-label="Fermer la fenêtre">×</button></div>
+    <div class="dialog-pack"><span class="dialog-pack-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><div><h2 id="dialog-title"></h2><p id="dialog-meta"></p></div></div>
+    <p id="dialog-intro">Comment souhaitez-vous récupérer ce pack ? Rien ne sera enregistré sans votre demande.</p>
+    <div class="method-card recommended"><div class="method-heading"><svg aria-hidden="true"><use href="#i-download"/></svg><h3>Télécharger le fichier</h3><span class="method-badge">RECOMMANDÉ</span></div><p>Enregistrez le ZIP, puis sélectionnez-le dans l’importeur du jeu. Aucune extraction nécessaire sur ce site.</p><button class="primary-button" id="download-button" type="button"><svg aria-hidden="true"><use href="#i-download"/></svg><span id="download-label">Télécharger le ZIP</span><svg class="button-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+    <details class="method-card experimental" id="experimental-options"><summary><span><svg aria-hidden="true"><use href="#i-spark"/></svg>Essayer le glisser-déposer</span><span class="experimental-badge">EXPÉRIMENTAL</span></summary><div class="experimental-body"><p id="drag-hint">Le transfert d’un fichier en mémoire vers Bloxd.io peut échouer et n’est pas garanti. Cette option prépare un vrai File en mémoire, mais le navigateur peut ne pas le transmettre. Aucun import réussi n’est annoncé.</p><button class="secondary-button" id="prepare-button" type="button">Préparer en mémoire</button><div class="drag-zone" id="drag-zone" draggable="false" tabindex="0" role="group" aria-label="Fichier en mémoire à glisser" aria-disabled="true" aria-describedby="drag-hint"><span class="file-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><strong id="drag-title">Préparez d’abord le fichier</strong><span id="drag-subtitle">Aucun enregistrement sur disque</span></div><a class="diagnostic-link" href="diagnostics.html" target="_blank" rel="noopener noreferrer">Ouvrir le récepteur de diagnostic ↗</a></div></details>
+    <div class="progress-section" id="progress-section" hidden><div class="progress-text"><span id="progress-label">Chargement…</span><span id="progress-value">0 %</span></div><progress id="load-progress" max="100" value="0" aria-label="Chargement du pack"></progress></div>
+    <p id="app-message" class="app-message" role="status" aria-live="polite" hidden></p>
+    <div class="dialog-bottom"><span id="memory-label">Aucun fichier chargé</span><button class="text-button" id="clear-button" type="button" disabled><svg aria-hidden="true"><use href="#i-trash"/></svg><span>Libérer le fichier</span></button></div>
+    <details class="file-details"><summary>Détails et intégrité du fichier</summary><dl id="file-metadata"></dl><p>Les contrôles d’origine, taille, structure ZIP et SHA-256 ne constituent ni un antivirus ni une garantie de compatibilité avec Bloxd.io.</p></details>
+  </dialog>
+  <noscript><div class="noscript-note">JavaScript est nécessaire pour afficher le catalogue et vérifier les packs. Les archives restent accessibles dans les dossiers shaders/, schems/ et t-packs/ du dépôt.</div></noscript>
 </body>
 </html>
