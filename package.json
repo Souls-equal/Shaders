@@ -1,0 +1,16 @@
+{
+  "name": "bloxd-file-share",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Static, in-memory shader pack sharing prototype for Bloxd.io",
+  "scripts": {
+    "start": "python3 -m http.server 3000 --bind 0.0.0.0",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node tools/browser-check.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
