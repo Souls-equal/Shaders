@@ -71,11 +71,22 @@ function showPack(pack) {
   clearFile();
   selectedPack = pack;
   $('dialog-title').textContent = packTitle(pack);
-  $('dialog-meta').textContent = `${pack.author} · ZIP · ${formatBytes(pack.expectedSizeBytes)}`;
+  $('dialog-meta').textContent = `${pack.author} · ZIP · ${formatBytes(pack.expectedSizeBytes)}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`;
+  $('dialog-preview').hidden = !pack.preview;
+  if (pack.preview) {
+    $('dialog-preview-image').src = pack.preview.src;
+    $('dialog-preview-image').alt = pack.preview.alt;
+    $('dialog-preview-label').textContent = pack.preview.type === 'screenshot' ? 'Capture en jeu' : 'Illustration IA · pas une capture en jeu';
+  } else {
+    $('dialog-preview-image').removeAttribute('src');
+    $('dialog-preview-image').alt = '';
+  }
   $('experimental-options').open = false;
   const list = $('file-metadata');
   list.replaceChildren();
   for (const [key, value] of [
+    ['Auteur', pack.author], ['Version du pack', pack.version],
+    ...(pack.apiVersion ? [['API shader', String(pack.apiVersion)]] : []),
     ['Fichier', pack.filename], ['Taille publiée', `${pack.expectedSizeBytes.toLocaleString('fr-FR')} octets`],
     ['Source', new URL(pack.url, document.baseURI).href], ['SHA-256', pack.sha256 || 'Non configuré'],
   ]) list.append(element('dt', '', key), element('dd', '', value));
@@ -87,24 +98,27 @@ function showPack(pack) {
 }
 
 function makeCard(pack) {
-  const card = element('article', `pack-card${pack.featured ? ' featured' : ''}`);
+  const card = element('article', `pack-card${pack.featured ? ' featured' : ''}${pack.preview ? ' with-preview' : ''}`);
   card.dataset.packId = pack.id;
-  if (pack.featured) {
+  if (pack.preview) {
     const art = element('div', 'shader-art');
     const image = element('img');
-    image.src = 'assets/aurora-landscape.webp';
-    image.alt = 'Vallée en blocs au coucher du soleil : illustration, pas une capture du shader en jeu.';
-    image.width = 1536;
-    image.height = 1024;
-    image.fetchPriority = 'high';
+    image.src = pack.preview.src;
+    image.alt = pack.preview.alt;
+    image.width = pack.preview.width || 1280;
+    image.height = pack.preview.height || 720;
+    image.loading = pack.featured ? 'eager' : 'lazy';
+    image.fetchPriority = pack.featured ? 'high' : 'auto';
+    image.decoding = 'async';
+    image.addEventListener('error', () => art.classList.add('preview-unavailable'));
     const top = element('div', 'art-top');
-    const badge = element('span', 'art-badge', 'À LA UNE');
+    const badge = element('span', 'art-badge', pack.featured ? 'À LA UNE' : pack.preview.theme || 'SHADER PACK');
     badge.prepend(icon('spark'));
-    top.append(badge, element('span', 'zip-badge', 'NOUVELLE VERSION'));
+    top.append(badge, element('span', 'zip-badge', pack.version));
     const bottom = element('div', 'art-bottom');
     const wordmark = element('span', 'art-wordmark', pack.name.toUpperCase());
-    wordmark.append(element('span', '', 'Une autre atmosphère. Le même monde.'));
-    bottom.append(wordmark, element('span', 'preview-label', 'Illustration'));
+    wordmark.append(element('span', '', pack.preview.tagline || 'Un autre regard sur votre monde.'));
+    bottom.append(wordmark, element('span', 'preview-label', pack.preview.type === 'screenshot' ? 'Capture en jeu' : 'Illustration IA'));
     art.append(image, top, bottom);
     card.append(art);
   }
@@ -112,12 +126,12 @@ function makeCard(pack) {
   const top = element('div', 'pack-topline');
   const badge = element('span', 'category-badge', pack.featured ? 'À LA UNE' : pack.archived ? 'ARCHIVE' : 'PACK COMMUNAUTAIRE');
   top.append(badge, element('span', 'pack-version', pack.version));
-  if (!pack.featured) {
+  if (!pack.preview) {
     const cube = element('span', 'archive-icon');
     cube.append(icon('cube'));
     body.append(cube);
   }
-  body.append(top, element('h3', '', pack.name), element('p', 'author', `par ${pack.author}`), element('p', 'pack-description', pack.description));
+  body.append(top, element('h3', '', pack.name), element('p', 'author', `par ${pack.author}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`), element('p', 'pack-description', pack.description));
   const bottom = element('div', 'pack-bottom');
   const specs = element('span', 'pack-size', `ZIP · ${formatBytes(pack.expectedSizeBytes)}`);
   const button = element('button', pack.featured ? 'get-pack primary-button' : 'get-pack secondary-button', 'Obtenir le pack');
@@ -142,10 +156,20 @@ function selectCategory(id, { focus = false } = {}) {
   }
   $('catalog-panel').setAttribute('aria-labelledby', `tab-${id}`);
   $('category-description').textContent = category.description;
-  const packs = PACKS.filter(pack => pack.category === id);
+  const packs = PACKS.filter(pack => pack.category === id)
+    .sort((a, b) => Number(!!a.archived) - Number(!!b.archived));
   const grid = $('pack-grid');
-  grid.replaceChildren(...packs.map(makeCard));
-  grid.classList.toggle('has-featured', packs.some(pack => pack.featured));
+  grid.replaceChildren();
+  let archivesLabelled = false;
+  for (const pack of packs) {
+    if (pack.archived && !archivesLabelled) {
+      const heading = element('div', 'catalog-divider');
+      heading.append(element('h3', '', 'Les versions précédentes'), element('span', '', 'Les archives restent disponibles, sans modification.'));
+      grid.append(heading);
+      archivesLabelled = true;
+    }
+    grid.append(makeCard(pack));
+  }
   if (!packs.length) {
     const empty = element('div', 'empty-state');
     const emptyIcon = element('span', 'empty-icon');

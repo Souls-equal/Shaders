@@ -65,7 +65,7 @@ try {
   await page.goto(base);
   await check('three category tabs, real versions, V12 featured; no eager fetch or download', async () => {
     assert.equal(await page.getByRole('tab').count(), 3);
-    assert.equal(await page.locator('.pack-card').count(), 3);
+    assert.equal(await page.locator('.pack-card').count(), PACKS.filter(pack => pack.category === 'shaders').length);
     assert.equal(await page.locator('.pack-card.featured').getAttribute('data-pack-id'), latest.id);
     assert.equal(archiveRequests.length, 0);
     assert.equal(downloads, 0);
@@ -78,10 +78,26 @@ try {
     assert.equal(await page.locator('#tab-t-packs').getAttribute('aria-selected'), 'true');
     assert.match(await page.locator('.empty-state').textContent(), /Aucun texture pack/);
     await page.keyboard.press('Home');
-    assert.equal(await page.locator('.pack-card').count(), 3);
+    assert.equal(await page.locator('.pack-card').count(), PACKS.filter(pack => pack.category === 'shaders').length);
     await page.keyboard.press('End');
     assert.equal(await page.locator('#tab-t-packs').getAttribute('aria-selected'), 'true');
     await page.getByRole('tab', { name: /Shaders/ }).click();
+  });
+  await check('four distinct shader previews load, with honest illustration labels and separate archive cards', async () => {
+    const current = PACKS.filter(pack => pack.category === 'shaders' && !pack.archived);
+    assert.equal(await page.locator('.pack-card.with-preview').count(), current.length);
+    for (const pack of current) {
+      const card = page.locator(`[data-pack-id="${pack.id}"]`);
+      const image = card.locator('.shader-art > img');
+      await image.scrollIntoViewIfNeeded();
+      await image.evaluate(node => node.decode());
+      assert.equal(await image.getAttribute('src'), pack.preview.src);
+      assert.equal(await image.getAttribute('alt'), pack.preview.alt);
+      assert.match(await card.locator('.preview-label').textContent(), /Illustration IA/);
+      assert.equal(await image.evaluate(node => node.naturalWidth > 0), true);
+    }
+    assert.equal(await page.locator('.catalog-divider').count(), 1);
+    assert.equal(await page.locator('.pack-card:not(.with-preview)').count(), PACKS.filter(pack => pack.archived).length);
   });
   await check('opening a pack only opens the modal; Escape restores focus', async () => {
     await openPack();
@@ -94,9 +110,19 @@ try {
     assert.match(await page.evaluate(() => document.activeElement.getAttribute('aria-label')), /Obtenir Aurora · V12/);
   });
   for (const pack of PACKS) {
-    await check(`${pack.version}: explicit download has correct filename and byte-identical archive`, async () => {
+    await check(`${pack.name} ${pack.version}: explicit download has correct filename and byte-identical archive`, async () => {
       await openPack(pack);
       assert.equal(await page.locator('#memory-label').textContent(), 'Aucun fichier chargé');
+      if (pack.preview) {
+        assert.equal(await page.locator('#dialog-preview').isVisible(), true);
+        assert.equal(await page.locator('#dialog-preview-image').getAttribute('src'), pack.preview.src);
+        await page.locator('#dialog-preview-image').evaluate(node => node.decode());
+        assert.match(await page.locator('#dialog-preview-label').textContent(), /pas une capture en jeu/);
+      } else {
+        assert.equal(await page.locator('#dialog-preview').isVisible(), false);
+        assert.equal(await page.locator('#dialog-preview-image').getAttribute('src'), null);
+      }
+      assert.match(await page.locator('#dialog-meta').textContent(), /API 5/);
       const pending = page.waitForEvent('download');
       await page.locator('#download-button').click();
       const download = await pending;
@@ -165,7 +191,7 @@ try {
     const before = downloads;
     await openPack(); await page.locator('#download-button').click(); await started;
     await closePack();
-    await openPack(PACKS[1]); await prepare();
+    await openPack(PACKS.find(pack => pack.id === 'aurora-v9')); await prepare();
     release();
     await page.unroute('**/shaders/aurora-v12.zip');
     assert.equal(downloads, before);

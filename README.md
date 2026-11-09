@@ -20,7 +20,10 @@ Sous Windows, utiliser `python` si nécessaire. Ne pas ouvrir la page en `file:/
 ├── shaders/
 │   ├── aurora-v12.zip           # Ancien « aurora - 12.zip »
 │   ├── aurora-v9.zip            # Ancien « aurora - V9.zip »
-│   └── aurora-original.zip      # Ancien « aurora.zip »
+│   ├── aurora-original.zip      # Ancien « aurora.zip »
+│   ├── emberfall-v5.zip
+│   ├── frostbound-v5.zip
+│   └── sunrise-v5.zip           # Nom déclaré : Golden Hour
 ├── schems/                     # Schematics à publier
 ├── t-packs/                    # Texture packs à publier
 ├── index.html                  # Catalogue et fenêtre de récupération
@@ -32,26 +35,29 @@ Sous Windows, utiliser `python` si nécessaire. Ne pas ouvrir la page en `file:/
 │   ├── shader-loader.js        # Chargeur ZIP partagé : flux borné, Blob, File
 │   ├── drag-drop.js             # Drag natif, jamais simulé
 │   └── diagnostics.js          # Métadonnées et hash à la réception
-├── assets/                     # Illustration et police locales
+├── assets/                     # Illustrations WebP propres à chaque pack et police locale
 ├── tests/                      # Tests Node sans dépendance
 ├── tools/browser-check.mjs      # Contrôles UI et téléchargements Playwright
 ├── docs/                       # Rapport et observations
 └── netlify.toml
 ```
 
-Les trois archives ont été déplacées/renommées **sans modifier leurs octets**. Les anciens chemins à la racine ne sont plus utilisés. Les dossiers vides `schems/` et `t-packs/` sont conservés avec `.gitkeep`.
+Les trois archives Aurora ont été déplacées/renommées **sans modifier leurs octets**. Les anciens chemins à la racine ne sont plus utilisés. Les dossiers vides `schems/` et `t-packs/` sont conservés avec `.gitkeep`.
 
 ### Catalogue actuel
 
-Auteur déclaré dans les trois manifestes : **K4miNoK4mi**, nom **Aurora**, `apiVersion: 5`.
+Six archives sont publiées : quatre shaders actuels avec un visuel distinct, puis deux anciennes versions d’Aurora regroupées sous « Les versions précédentes ». Les métadonnées proviennent des manifestes : **K4miNoK4mi** pour Aurora, **Arena Agent** pour les trois nouveaux packs ; tous déclarent `apiVersion: 5`.
 
 | Version | Chemin | Taille réelle | SHA-256 |
 |---|---|---:|---|
 | V12, mise en avant | `shaders/aurora-v12.zip` | 17 036 octets | `4592bfadf6d1662607afdcef290961796af0676f29a561e97873ec90217b2100` |
+| Emberfall 1.0.1 | `shaders/emberfall-v5.zip` | 8 163 octets | `7e3648cd06ed4db6653a9153ac1ff159774c960c1b9b25e1aafcf59e61a41c4e` |
+| Frostbound 1.0.1 | `shaders/frostbound-v5.zip` | 9 843 octets | `f01855eed024f702ad5bd7c009a235c93f70f1d406cc984b9a396c923fd2a809` |
+| Golden Hour 1.0.1 | `shaders/sunrise-v5.zip` | 8 108 octets | `a03523df78ff8a97e585f87ce31c76c179c88eb75501dffc555735daa4172ad3` |
 | V9, archive | `shaders/aurora-v9.zip` | 15 703 octets | `b809e83196b9d5197eea8bbf5346e05a30fd677bb90c66677cc37c4146954bab` |
 | Original, version non confirmée | `shaders/aurora-original.zip` | 16 789 octets | `f83f701ce164341fb41344ff0df502ff823ec1db92579101c22ed1ecdf1d91d4` |
 
-L’archive d’origine n’a pas de numéro confirmé : elle n’est pas rebaptisée arbitrairement V10 ou V11. Les catégories Schematics et Texture packs n’ont pas encore de contenu ; le site l’indique au lieu de présenter de faux packs. L’image est une illustration, **pas une capture vérifiée d’Aurora dans le jeu**.
+L’archive d’origine n’a pas de numéro confirmé : elle n’est pas rebaptisée arbitrairement V10 ou V11. Les catégories Schematics et Texture packs n’ont pas encore de contenu ; le site l’indique au lieu de présenter de faux packs. Les quatre visuels sont des illustrations IA, **pas des captures en jeu** ; les cartes et fenêtres le précisent. Les ambiances et descriptions des nouveaux packs suivent les intentions et réglages présents dans leurs fichiers WGSL, sans promettre un résultat testé dans Bloxd.io. `sunrise-v5.zip` conserve son nom de fichier, mais s’affiche sous **Golden Hour**, son nom dans `pack.json`. Le suffixe `v5` désigne ici l’API ; leur version de pack déclarée est **1.0.1**, affichée séparément.
 
 ## Récupérer un pack
 
@@ -88,11 +94,16 @@ Object.freeze({
   url: './shaders/mon-pack.zip',
   expectedSizeBytes: 12345,       // Remplacer par la taille réelle.
   sha256: 'EMPREINTE_SHA256_REELLE_DE_64_CARACTERES',
-  // featured: true,             // Facultatif : carte avec illustration.
+  apiVersion: 5,                // Reprendre la valeur réelle du manifeste.
+  // Facultatif : illustration propre au pack, sur carte ET dans la fenêtre.
+  preview: preview('assets/mon-pack.webp', 'Illustration du paysage…', 'Votre accroche.', 'Votre thème'),
+  // featured: true,             // Facultatif : mise en avant, indépendante du visuel.
 }),
 ```
 
 **Remplacer les valeurs d’exemple avant publication.** Le filtre, le compteur, la carte et les deux options de la fenêtre sont générés à partir du catalogue : aucune modification de HTML ou de gestionnaire de téléchargement n’est nécessaire. Un site statique ne peut pas énumérer arbitrairement les fichiers du serveur ; déposer un fichier seul ne suffit donc pas à le publier dans le catalogue.
+
+Les visuels se configurent dans `preview` : `src`, `alt`, `tagline`, `theme`, `width`, `height` et `type`. Le helper `preview(...)` utilise `type: 'illustration'` ; une véritable capture vérifiée peut être déclarée avec un objet `preview` de `type: 'screenshot'`. Sans visuel, la carte reste compacte avec une icône. Les nouvelles images sont servies localement en WebP et chargées à la demande, hormis la carte mise en avant.
 
 Le chargeur actuel est volontairement limité aux **archives ZIP**, quelle que soit leur catégorie. Ajouter des schematics bruts dans un autre format nécessitera un validateur approprié ; ne pas simplement renommer leur extension en `.zip`. Le format et la structure attendus par l’importeur Bloxd doivent être vérifiés séparément. La présence d’une catégorie ne prétend pas rendre n’importe quel fichier compatible avec le jeu.
 
@@ -125,17 +136,17 @@ Pour tester Edge : ouvrir le catalogue et le récepteur dans deux onglets réels
 ## Tests
 
 ```sh
-npm test                        # Node 22+, sans dépendance : 29 tests.
+npm test                        # Node 22+, sans dépendance : 35 tests.
 
 # Contrôles navigateur facultatifs ; serveur local déjà lancé :
 npm ci
 npx playwright install --with-deps chromium
-npm run test:browser            # 20 contrôles UI, téléchargements et erreurs.
+npm run test:browser            # 24 contrôles UI, téléchargements et erreurs.
 ```
 
-Le script navigateur vérifie entre autres les octets téléchargés des trois versions, l’absence de téléchargement à l’ouverture/préparation, l’annulation/fermeture pendant le chargement, la non-réutilisation d’un autre pack, la navigation clavier et l’affichage mobile. Des entrées ZIP de schematics/texture packs **uniquement injectées dans les tests** vérifient la réutilisation de la même fenêtre ; aucun faux pack n’est publié sur le site.
+Le script navigateur vérifie entre autres les octets téléchargés des six archives et les visuels propres à chaque shader, l’absence de téléchargement à l’ouverture/préparation, l’annulation/fermeture pendant le chargement, la non-réutilisation d’un autre pack, la navigation clavier et l’affichage mobile. Des entrées ZIP de schematics/texture packs **uniquement injectées dans les tests** vérifient la réutilisation de la même fenêtre ; aucun faux pack n’est publié sur le site.
 
-Les sorties sont dans `test-results/` (ignoré par Git). Les observations conservées sont dans `docs/catalogue-browser-evidence.json`. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
+Les sorties sont dans `test-results/` (ignoré par Git). Les observations actuelles sont dans `docs/shader-integration-evidence.json` ; `docs/catalogue-browser-evidence.json` conserve le rapport antérieur à l’ajout des trois shaders. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
 
 ## Hébergement
 
@@ -147,4 +158,4 @@ Déployer `index.html`, `diagnostics.html`, `css/`, `js/`, `assets/` et les doss
 
 ## Crédits
 
-[Apache-2.0](LICENSE) pour le dépôt. Police DM Sans auto-hébergée sous [SIL Open Font License](assets/FONT-LICENSE.txt). Illustration créée pour le prototype, non capture d’écran du jeu. Attribution Aurora reprise des manifestes. Projet indépendant, sans affiliation officielle avec Bloxd.io.
+[Apache-2.0](LICENSE) pour le dépôt. Police DM Sans auto-hébergée sous [SIL Open Font License](assets/FONT-LICENSE.txt). Illustrations créées pour le site, non captures d’écran du jeu. Noms, versions et auteurs des packs repris des manifestes. Projet indépendant, sans affiliation officielle avec Bloxd.io.

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101116">
-  <meta name="description" content="Shaders, schematics et texture packs pour Bloxd.io. Retrouvez Aurora V12 et choisissez comment récupérer votre pack.">
+  <meta name="description" content="Shaders, schematics et texture packs pour Bloxd.io. Découvrez Aurora, Emberfall, Frostbound et Golden Hour, et choisissez comment récupérer votre pack.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'none'">
   <title>Bloxd File Share — Vos packs, prêts à jouer.</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -56,6 +56,7 @@
 
   <dialog id="pack-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-intro">
     <div class="dialog-heading"><span class="eyebrow">À VOUS DE CHOISIR</span><button class="close-button" id="close-dialog" type="button" aria-label="Fermer la fenêtre">×</button></div>
+    <div class="dialog-preview" id="dialog-preview" hidden><img id="dialog-preview-image" alt=""><span id="dialog-preview-label"></span></div>
     <div class="dialog-pack"><span class="dialog-pack-icon"><svg aria-hidden="true"><use href="#i-file"/></svg></span><div><h2 id="dialog-title"></h2><p id="dialog-meta"></p></div></div>
     <p id="dialog-intro">Comment souhaitez-vous récupérer ce pack ? Rien ne sera enregistré sans votre demande.</p>
     <div class="method-card recommended"><div class="method-heading"><svg aria-hidden="true"><use href="#i-download"/></svg><h3>Télécharger le fichier</h3><span class="method-badge">RECOMMANDÉ</span></div><p>Enregistrez le ZIP, puis sélectionnez-le dans l’importeur du jeu. Aucune extraction nécessaire sur ce site.</p><button class="primary-button" id="download-button" type="button"><svg aria-hidden="true"><use href="#i-download"/></svg><span id="download-label">Télécharger le ZIP</span><svg class="button-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
