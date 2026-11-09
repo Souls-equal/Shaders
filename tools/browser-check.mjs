@@ -63,6 +63,8 @@ async function errorCase(handler, message) {
 }
 try {
   await page.goto(base);
+  // Keep the original regression suite in French; language-check covers English first.
+  await page.locator('.header [data-language-toggle]').click();
   await check('three category tabs, real versions, V12 featured; no eager fetch or download', async () => {
     assert.equal(await page.getByRole('tab').count(), 3);
     assert.equal(await page.locator('.pack-card').count(), PACKS.filter(pack => pack.category === 'shaders').length);
@@ -71,12 +73,12 @@ try {
     assert.equal(downloads, 0);
   });
   await check('category switching and arrow/Home/End keys show honest empty states', async () => {
-    await page.getByRole('tab', { name: /Schematics/ }).click();
+    await page.locator('#tab-schems').click();
     assert.equal(await page.locator('.pack-card').count(), 0);
-    assert.match(await page.locator('.empty-state').textContent(), /Aucun schematic/);
+    assert.match(await page.locator('.empty-state').textContent(), /Aucun schéma/);
     await page.keyboard.press('ArrowRight');
     assert.equal(await page.locator('#tab-t-packs').getAttribute('aria-selected'), 'true');
-    assert.match(await page.locator('.empty-state').textContent(), /Aucun texture pack/);
+    assert.match(await page.locator('.empty-state').textContent(), /Aucun pack de textures/);
     await page.keyboard.press('Home');
     assert.equal(await page.locator('.pack-card').count(), PACKS.filter(pack => pack.category === 'shaders').length);
     await page.keyboard.press('End');
@@ -227,7 +229,7 @@ try {
     for (const pack of future) await fixture.route(`**/${pack.category}/sample.zip`, route => route.fulfill({ contentType: 'application/zip', body: bytes }));
     await fixture.goto(base);
     for (const pack of future) {
-      await fixture.getByRole('tab', { name: new RegExp(CATEGORIES.find(category => category.id === pack.category).label) }).click();
+      await fixture.locator(`#tab-${pack.category}`).click();
       await openPack(pack, fixture);
       const pending = fixture.waitForEvent('download');
       await fixture.locator('#download-button').click();

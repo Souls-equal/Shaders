@@ -4,6 +4,17 @@ Bibliothèque statique de packs pour Bloxd.io, en HTML/CSS/JavaScript moderne, s
 
 > **Le téléchargement volontaire est désormais la méthode recommandée.** Un vrai `File` en mémoire n’est pas nécessairement transporté intact par le drag natif vers un autre onglet. Le glisser-déposer reste une expérience, pas une promesse d’import dans Bloxd.io.
 
+## Langues : anglais par défaut, français au choix
+
+- Le bouton **EN / FR** est disponible dans l’en-tête, dans la fenêtre d’un pack et sur le récepteur de diagnostic.
+- **Anglais à la première visite**, indépendamment de la langue du navigateur. Seul un choix explicite mémorisé peut remplacer ce défaut.
+- La préférence est enregistrée localement sous `bloxd-file-share-language` et partagée avec la page de diagnostic. Une valeur inconnue ou un stockage inaccessible n’empêche pas le fonctionnement : retour à l’anglais, puis changement possible en mémoire.
+- Le changement traduit aussi les catégories, descriptions, textes alternatifs des images, métadonnées de page, libellés accessibles, unités, erreurs, progression et résultats du diagnostic.
+- Changer de langue n’annule pas un chargement, ne supprime pas un fichier préparé et ne relance aucun Fetch ou téléchargement. La catégorie sélectionnée et les sections développées de la fenêtre sont conservées.
+- Les noms des packs/auteurs, noms de fichiers, versions, types MIME, URL, empreintes SHA-256 et octets des ZIP ne sont pas traduits.
+
+Les textes se trouvent dans `js/translations.js`, avec les mêmes clés et paramètres dans `en` et `fr`. `js/i18n.js` gère la préférence, les formats et le rafraîchissement des vues sans rechargement. Pour un nouveau pack, ajouter les clés `pack.<id>.description` et, si illustré, `pack.<id>.alt`, `.tagline`, `.theme` dans les deux langues. Les champs français d’origine restent dans `config.js`. Une entrée peut aussi fournir `translations.en` et `translations.fr` avec ces mêmes champs pour surcharger les textes du dictionnaire.
+
 ## Démarrer
 
 ```sh
@@ -32,6 +43,8 @@ Sous Windows, utiliser `python` si nécessaire. Ne pas ouvrir la page en `file:/
 ├── js/
 │   ├── config.js               # Catégories et catalogue PACKS
 │   ├── app.js                  # Filtres, cartes, fenêtre, téléchargement et nettoyage
+│   ├── i18n.js                 # EN/FR, préférence et formats localisés
+│   ├── translations.js         # Tous les textes du site dans les deux langues
 │   ├── shader-loader.js        # Chargeur ZIP partagé : flux borné, Blob, File
 │   ├── drag-drop.js             # Drag natif, jamais simulé
 │   └── diagnostics.js          # Métadonnées et hash à la réception
@@ -136,17 +149,18 @@ Pour tester Edge : ouvrir le catalogue et le récepteur dans deux onglets réels
 ## Tests
 
 ```sh
-npm test                        # Node 22+, sans dépendance : 35 tests.
+npm test                        # Node 22+, sans dépendance : 42 tests.
 
 # Contrôles navigateur facultatifs ; serveur local déjà lancé :
 npm ci
 npx playwright install --with-deps chromium
 npm run test:browser            # 24 contrôles UI, téléchargements et erreurs.
+npm run test:languages          # 12 contrôles EN/FR, stockage, diagnostics et état conservé.
 ```
 
 Le script navigateur vérifie entre autres les octets téléchargés des six archives et les visuels propres à chaque shader, l’absence de téléchargement à l’ouverture/préparation, l’annulation/fermeture pendant le chargement, la non-réutilisation d’un autre pack, la navigation clavier et l’affichage mobile. Des entrées ZIP de schematics/texture packs **uniquement injectées dans les tests** vérifient la réutilisation de la même fenêtre ; aucun faux pack n’est publié sur le site.
 
-Les sorties sont dans `test-results/` (ignoré par Git). Les observations actuelles sont dans `docs/shader-integration-evidence.json` ; `docs/catalogue-browser-evidence.json` conserve le rapport antérieur à l’ajout des trois shaders. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
+Les sorties sont dans `test-results/` (ignoré par Git). Les observations EN/FR sont dans `docs/language-evidence.json`. Les observations de l’intégration des shaders sont dans `docs/shader-integration-evidence.json` ; `docs/catalogue-browser-evidence.json` conserve le rapport antérieur à l’ajout des trois shaders. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
 
 ## Hébergement
 

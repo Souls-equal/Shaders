@@ -302,7 +302,7 @@ progress::-moz-progress-bar { background: #c39bf1; }
 .catalog-divider h3 { margin: 0; font-size: 15px; font-weight: 500; letter-spacing: -.2px; }
 .catalog-divider > span { color: #b0a1bd; font-size: 10px; }
 .preview-unavailable > img { visibility: hidden; }
-.preview-unavailable:before { content: 'Visuel indisponible'; position: absolute; inset: 35% 0 auto; text-align: center; color: #d9c4ec; font-size: 13px; }
+.preview-unavailable:before { content: attr(data-preview-unavailable); position: absolute; inset: 35% 0 auto; text-align: center; color: #d9c4ec; font-size: 13px; }
 .dialog-preview { position: relative; margin-top: 18px; border-radius: 9px; overflow: hidden; background: #2d2538; height: 132px; }
 .dialog-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .dialog-preview > span { position: absolute; bottom: 8px; right: 8px; padding: 3px 7px; border-radius: 4px; color: #fff; background: #100b18d9; font-size: 8px; }
@@ -311,4 +311,22 @@ progress::-moz-progress-bar { background: #c39bf1; }
 }
 @media (max-width: 400px) {
   .art-wordmark { font-size: 25px; letter-spacing: 2px; }
+}
+
+/* Shared EN / FR control. Never reload or reset a pack when changing language. */
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.header-actions .github-link { margin-left: 0; }
+.language-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 35px; padding: 6px 10px; border: 1px solid #50405f; border-radius: 7px; background: #201b29; color: #ad99bd; font-size: 10px; font-weight: 500; white-space: nowrap; }
+.language-toggle:hover { border-color: #a283bd; background: #302339; }
+.language-toggle .active-language { color: #f0defe; font-weight: 800; }
+.language-toggle > [aria-hidden] { color: #8d769f; }
+.dialog-controls { display: flex; align-items: center; gap: 8px; }
+.hero h1 > span[data-i18n="hero.start"] { background: none; -webkit-text-fill-color: currentColor; color: var(--text); }
+@media (max-width: 760px) {
+  .header-actions { gap: 8px; }
+  .language-toggle { padding: 6px 8px; gap: 5px; }
+  .diagnostic-header .brand-light { display: none; }
+}
+@media (max-width: 400px) {
+  .header:not(.diagnostic-header) .header-actions .github-link { display: none; }
 }

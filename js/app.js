@@ -1,6 +1,7 @@
 import { CATEGORIES, PACKS } from './config.js';
-import { formatBytes, loadShader } from './shader-loader.js';
+import { loadShader } from './shader-loader.js';
 import { attachFileDrag, getDragSupport } from './drag-drop.js';
+import { initI18n, t, formatSize, number, packText, categoryText, onLanguageChange } from './i18n.js';
 
 const $ = id => document.getElementById(id);
 const dialog = $('pack-dialog');
@@ -12,6 +13,8 @@ let generation = 0;
 let downloadURL = null;
 let downloadTimer = null;
 let activeCategory = CATEGORIES[0].id;
+let messageState = { key: '', tone: 'info', params: {} };
+let progressState = { received: 0, percent: 0, phase: 'fetching' };
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -28,10 +31,21 @@ function icon(name) {
   return node;
 }
 function packTitle(pack) { return `${pack.name} · ${pack.version}`; }
-function message(text = '', tone = 'info') {
-  $('app-message').textContent = text;
-  $('app-message').dataset.tone = tone;
-  $('app-message').hidden = !text;
+function message(key = '', tone = 'info', params = {}) {
+  messageState = { key, tone, params };
+  renderMessage();
+}
+function renderMessage() {
+  $('app-message').textContent = messageState.key ? t(messageState.key, messageState.params) : '';
+  $('app-message').dataset.tone = messageState.tone;
+  $('app-message').hidden = !messageState.key;
+}
+function renderProgress() {
+  const { received, percent, phase } = progressState;
+  if (percent === null) $('load-progress').removeAttribute('value');
+  else $('load-progress').value = percent;
+  $('progress-value').textContent = percent === null ? formatSize(received) : `${number(percent)} %`;
+  $('progress-label').textContent = received === 0 ? t('progress.fetching') : phase === 'checking' ? t('progress.checking') : t('progress.received', { size: formatSize(received) });
 }
 function revokeDownload() {
   clearTimeout(downloadTimer);
@@ -43,18 +57,18 @@ function renderTransfer() {
   const busy = !!controller;
   const ready = !!preparedFile;
   $('download-button').disabled = busy;
-  $('download-label').textContent = busy ? 'Vérification du fichier…' : 'Télécharger le ZIP';
+  $('download-label').textContent = busy ? t('download.busy') : t('download.idle');
   $('prepare-button').disabled = busy || ready || !support.supported;
-  $('prepare-button').textContent = ready ? 'Fichier prêt en mémoire' : busy ? 'Préparation…' : 'Préparer en mémoire';
+  $('prepare-button').textContent = ready ? t('prepare.ready') : busy ? t('prepare.busy') : t('prepare.idle');
   $('clear-button').disabled = !busy && !ready;
-  $('clear-button').querySelector('span').textContent = busy ? 'Annuler le chargement' : 'Libérer le fichier';
+  $('clear-button').querySelector('span').textContent = busy ? t('clear.busy') : t('clear.idle');
   $('progress-section').hidden = !busy;
-  $('memory-label').textContent = busy ? 'Chargement en cours…' : ready ? `${formatBytes(preparedFile.size)} en mémoire` : 'Aucun fichier chargé';
+  $('memory-label').textContent = busy ? t('memory.busy') : ready ? t('memory.ready', { size: formatSize(preparedFile.size) }) : t('memory.idle');
   $('drag-zone').draggable = ready && support.supported;
   $('drag-zone').setAttribute('aria-disabled', String(!ready || !support.supported));
   $('drag-zone').classList.remove('is-dragging');
-  $('drag-title').textContent = ready ? 'Glisser ce fichier — sans garantie de transfert' : 'Préparez d’abord le fichier';
-  $('drag-subtitle').textContent = ready ? `${preparedFile.name} · ${formatBytes(preparedFile.size)}` : 'Aucun enregistrement sur disque';
+  $('drag-title').textContent = ready ? t('drag.ready') : t('drag.idle');
+  $('drag-subtitle').textContent = ready ? `${preparedFile.name} · ${formatSize(preparedFile.size)}` : t('drag.noDisk');
 }
 function clearFile(announce = false) {
   generation++;
@@ -64,36 +78,38 @@ function clearFile(announce = false) {
   preparedFile = null;
   revokeDownload();
   renderTransfer();
-  message(announce ? loading ? 'Chargement annulé. Aucun téléchargement n’a été lancé.' : 'Références au fichier et URL temporaires libérées.' : '');
+  message(announce ? loading ? 'status.cancelled' : 'status.cleared' : '');
 }
 
-function showPack(pack) {
-  clearFile();
-  selectedPack = pack;
+function renderPackDetails(pack) {
   $('dialog-title').textContent = packTitle(pack);
-  $('dialog-meta').textContent = `${pack.author} · ZIP · ${formatBytes(pack.expectedSizeBytes)}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`;
+  $('dialog-meta').textContent = `${pack.author} · ZIP · ${formatSize(pack.expectedSizeBytes)}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`;
   $('dialog-preview').hidden = !pack.preview;
   if (pack.preview) {
     $('dialog-preview-image').src = pack.preview.src;
-    $('dialog-preview-image').alt = pack.preview.alt;
-    $('dialog-preview-label').textContent = pack.preview.type === 'screenshot' ? 'Capture en jeu' : 'Illustration IA · pas une capture en jeu';
+    $('dialog-preview-image').alt = packText(pack, 'alt');
+    $('dialog-preview-label').textContent = t(pack.preview.type === 'screenshot' ? 'preview.capture' : 'preview.disclaimer');
   } else {
     $('dialog-preview-image').removeAttribute('src');
     $('dialog-preview-image').alt = '';
   }
-  $('experimental-options').open = false;
   const list = $('file-metadata');
   list.replaceChildren();
   for (const [key, value] of [
-    ['Auteur', pack.author], ['Version du pack', pack.version],
-    ...(pack.apiVersion ? [['API shader', String(pack.apiVersion)]] : []),
-    ['Fichier', pack.filename], ['Taille publiée', `${pack.expectedSizeBytes.toLocaleString('fr-FR')} octets`],
-    ['Source', new URL(pack.url, document.baseURI).href], ['SHA-256', pack.sha256 || 'Non configuré'],
-  ]) list.append(element('dt', '', key), element('dd', '', value));
+    ['details.author', pack.author], ['details.version', pack.version],
+    ...(pack.apiVersion ? [['details.api', String(pack.apiVersion)]] : []),
+    ['details.file', pack.filename], ['details.size', t('details.bytes', { count: number(pack.expectedSizeBytes) })],
+    ['details.source', new URL(pack.url, document.baseURI).href], ['SHA-256', pack.sha256 || t('details.noHash')],
+  ]) list.append(element('dt', '', key === 'SHA-256' ? key : t(key)), element('dd', '', value));
+}
+function showPack(pack) {
+  clearFile();
+  selectedPack = pack;
+  renderPackDetails(pack);
+  $('experimental-options').open = false;
   $('file-metadata').parentElement.open = false;
-  if (!support.supported) message('Ce navigateur ne permet pas le glisser-déposer d’un fichier en mémoire. Le téléchargement reste disponible.');
+  if (!support.supported) message('status.unsupported');
   dialog.showModal();
-  // Focus the explicit, recommended choice, not the experimental method.
   $('download-button').focus({ preventScroll: true });
 }
 
@@ -102,9 +118,10 @@ function makeCard(pack) {
   card.dataset.packId = pack.id;
   if (pack.preview) {
     const art = element('div', 'shader-art');
+    art.dataset.previewUnavailable = t('preview.unavailable');
     const image = element('img');
     image.src = pack.preview.src;
-    image.alt = pack.preview.alt;
+    image.alt = packText(pack, 'alt');
     image.width = pack.preview.width || 1280;
     image.height = pack.preview.height || 720;
     image.loading = pack.featured ? 'eager' : 'lazy';
@@ -112,31 +129,31 @@ function makeCard(pack) {
     image.decoding = 'async';
     image.addEventListener('error', () => art.classList.add('preview-unavailable'));
     const top = element('div', 'art-top');
-    const badge = element('span', 'art-badge', pack.featured ? 'À LA UNE' : pack.preview.theme || 'SHADER PACK');
+    const badge = element('span', 'art-badge', pack.featured ? t('badge.featured') : packText(pack, 'theme') || t('badge.shader'));
     badge.prepend(icon('spark'));
     top.append(badge, element('span', 'zip-badge', pack.version));
     const bottom = element('div', 'art-bottom');
     const wordmark = element('span', 'art-wordmark', pack.name.toUpperCase());
-    wordmark.append(element('span', '', pack.preview.tagline || 'Un autre regard sur votre monde.'));
-    bottom.append(wordmark, element('span', 'preview-label', pack.preview.type === 'screenshot' ? 'Capture en jeu' : 'Illustration IA'));
+    wordmark.append(element('span', '', packText(pack, 'tagline') || t('preview.tagline')));
+    bottom.append(wordmark, element('span', 'preview-label', pack.preview.type === 'screenshot' ? t('preview.capture') : t('preview.illustration')));
     art.append(image, top, bottom);
     card.append(art);
   }
   const body = element('div', 'pack-body');
   const top = element('div', 'pack-topline');
-  const badge = element('span', 'category-badge', pack.featured ? 'À LA UNE' : pack.archived ? 'ARCHIVE' : 'PACK COMMUNAUTAIRE');
+  const badge = element('span', 'category-badge', pack.featured ? t('badge.featured') : pack.archived ? t('badge.archive') : t('badge.community'));
   top.append(badge, element('span', 'pack-version', pack.version));
   if (!pack.preview) {
     const cube = element('span', 'archive-icon');
     cube.append(icon('cube'));
     body.append(cube);
   }
-  body.append(top, element('h3', '', pack.name), element('p', 'author', `par ${pack.author}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`), element('p', 'pack-description', pack.description));
+  body.append(top, element('h3', '', pack.name), element('p', 'author', t('pack.by', { author: pack.author, api: pack.apiVersion ? ` · API ${pack.apiVersion}` : '' })), element('p', 'pack-description', packText(pack, 'description')));
   const bottom = element('div', 'pack-bottom');
-  const specs = element('span', 'pack-size', `ZIP · ${formatBytes(pack.expectedSizeBytes)}`);
-  const button = element('button', pack.featured ? 'get-pack primary-button' : 'get-pack secondary-button', 'Obtenir le pack');
+  const specs = element('span', 'pack-size', `ZIP · ${formatSize(pack.expectedSizeBytes)}`);
+  const button = element('button', pack.featured ? 'get-pack primary-button' : 'get-pack secondary-button', t('pack.get'));
   button.type = 'button';
-  button.setAttribute('aria-label', `Obtenir ${packTitle(pack)}`);
+  button.setAttribute('aria-label', t('pack.getAria', { pack: packTitle(pack) }));
   button.append(icon('arrow'));
   button.addEventListener('click', () => showPack(pack));
   bottom.append(specs, button);
@@ -155,7 +172,7 @@ function selectCategory(id, { focus = false } = {}) {
     if (selected && focus) tab.focus();
   }
   $('catalog-panel').setAttribute('aria-labelledby', `tab-${id}`);
-  $('category-description').textContent = category.description;
+  $('category-description').textContent = categoryText(category, 'description');
   const packs = PACKS.filter(pack => pack.category === id)
     .sort((a, b) => Number(!!a.archived) - Number(!!b.archived));
   const grid = $('pack-grid');
@@ -164,7 +181,7 @@ function selectCategory(id, { focus = false } = {}) {
   for (const pack of packs) {
     if (pack.archived && !archivesLabelled) {
       const heading = element('div', 'catalog-divider');
-      heading.append(element('h3', '', 'Les versions précédentes'), element('span', '', 'Les archives restent disponibles, sans modification.'));
+      heading.append(element('h3', '', t('archives.title')), element('span', '', t('archives.text')));
       grid.append(heading);
       archivesLabelled = true;
     }
@@ -174,10 +191,10 @@ function selectCategory(id, { focus = false } = {}) {
     const empty = element('div', 'empty-state');
     const emptyIcon = element('span', 'empty-icon');
     emptyIcon.append(icon(category.icon));
-    empty.append(emptyIcon, element('h3', '', 'Une collection à construire.'), element('p', '', `Aucun ${id === 'schems' ? 'schematic' : 'texture pack'} disponible pour le moment.`), element('span', 'empty-caption', 'Les prochains packs publiés apparaîtront ici, avec les mêmes options de récupération.'));
+    empty.append(emptyIcon, element('h3', '', t('empty.title')), element('p', '', t(id === 'schems' ? 'empty.schems' : 'empty.t-packs')), element('span', 'empty-caption', t('empty.caption')));
     grid.append(empty);
   }
-  $('library-status').textContent = `${packs.length} ${packs.length === 1 ? 'pack disponible' : 'packs disponibles'} dans la catégorie ${category.label}.`;
+  $('library-status').textContent = t(packs.length === 1 ? 'catalog.one' : 'catalog.many', { count: number(packs.length), category: categoryText(category, 'label') });
 }
 for (const category of CATEGORIES) {
   const tab = element('button', 'category-tab');
@@ -185,7 +202,7 @@ for (const category of CATEGORIES) {
   tab.id = `tab-${category.id}`;
   tab.setAttribute('role', 'tab');
   tab.setAttribute('aria-controls', 'catalog-panel');
-  tab.append(icon(category.icon), element('span', '', category.label), element('span', 'count-badge', String(PACKS.filter(pack => pack.category === category.id).length).padStart(2, '0')));
+  tab.append(icon(category.icon), element('span', 'category-label', categoryText(category, 'label')), element('span', 'count-badge', String(PACKS.filter(pack => pack.category === category.id).length).padStart(2, '0')));
   tab.addEventListener('click', () => selectCategory(category.id));
   tab.addEventListener('keydown', event => {
     const index = CATEGORIES.findIndex(item => item.id === activeCategory);
@@ -199,13 +216,12 @@ for (const category of CATEGORIES) {
 }
 selectCategory(activeCategory);
 
-const errorMessages = {
-  HTTP: 'Le serveur n’a pas pu fournir cette archive.', NETWORK: 'Chargement impossible : vérifiez le réseau, HTTPS et la politique CORS du serveur.',
-  SIZE: 'Le fichier dépasse la taille autorisée.', FORMAT: 'Cette archive ZIP est invalide ou non prise en charge.', MIME: 'Le serveur n’a pas renvoyé un fichier ZIP.',
-  INTEGRITY: 'Le fichier ne correspond pas à la taille ou à l’empreinte publiée. Aucun téléchargement lancé.',
-  TIMEOUT: 'Le serveur a mis trop de temps à répondre. Réessayez.', MEMORY: 'Mémoire insuffisante. Fermez quelques onglets ou essayez un fichier plus petit.',
-  SOURCE: 'La provenance du fichier n’est pas autorisée ou une redirection a été refusée.',
-};
+function errorKey(error) {
+  if (error.name === 'AbortError') return 'status.cancelled';
+  if (error.code === 'HTTP' && /404/.test(error.message)) return 'error.404';
+  const codes = ['HTTP', 'NETWORK', 'SIZE', 'FORMAT', 'MIME', 'INTEGRITY', 'TIMEOUT', 'MEMORY', 'SOURCE', 'CONFIG', 'EXTENSION', 'UNSUPPORTED'];
+  return codes.includes(error.code) ? `error.${error.code}` : 'error.unknown';
+}
 async function obtain(method) {
   if (!selectedPack || controller) return;
   const pack = selectedPack;
@@ -213,19 +229,16 @@ async function obtain(method) {
   const request = new AbortController();
   controller = request;
   message();
-  $('load-progress').value = 0;
-  $('progress-value').textContent = '0 %';
-  $('progress-label').textContent = 'Récupération et vérification…';
+  progressState = { received: 0, percent: 0, phase: 'fetching' };
+  renderProgress();
   renderTransfer();
   try {
     const file = preparedFile || await loadShader(pack, {
       signal: request.signal,
       onProgress: ({ received, percent, phase }) => {
         if (generation !== current) return;
-        if (percent === null) $('load-progress').removeAttribute('value');
-        else $('load-progress').value = percent;
-        $('progress-value').textContent = percent === null ? formatBytes(received) : `${percent} %`;
-        $('progress-label').textContent = phase === 'checking' ? 'Contrôle du ZIP et de son intégrité…' : `${formatBytes(received)} reçus`;
+        progressState = { received, percent, phase };
+        renderProgress();
       },
     });
     if (generation !== current || request.signal.aborted) return;
@@ -244,23 +257,25 @@ async function obtain(method) {
       link.click();
       link.remove();
       downloadTimer = setTimeout(revokeDownload, 60000);
-      message('Téléchargement demandé. Sélectionnez ensuite ce ZIP dans l’importeur de Bloxd.io. Si le navigateur demande une confirmation, autorisez l’enregistrement. L’import en jeu n’est pas vérifié.');
-    } else message('Vrai fichier prêt en mémoire. Attention : le navigateur peut perdre ce fichier pendant le glisser-déposer. Vérifiez le résultat dans la page de destination ; le téléchargement est l’option recommandée.');
+      message('status.download');
+    } else message('status.prepared');
   } catch (error) {
     if (generation !== current) return;
     controller = null;
     preparedFile = null;
     renderTransfer();
-    message(error.name === 'AbortError' ? 'Chargement annulé.' : error.code === 'HTTP' && /404/.test(error.message) ? 'Le serveur ne trouve pas cette archive (HTTP 404).' : errorMessages[error.code] || `Impossible de préparer le fichier : ${error.message}`, 'error');
+    message(errorKey(error), 'error');
   }
 }
 $('download-button').addEventListener('click', () => obtain('download'));
 $('prepare-button').addEventListener('click', () => obtain('drag'));
 $('clear-button').addEventListener('click', () => clearFile(true));
 function closeDialog() {
+  const returnId = selectedPack?.id;
   clearFile();
   selectedPack = null;
   if (dialog.open) dialog.close();
+  if (returnId) document.querySelector(`[data-pack-id="${CSS.escape(returnId)}"] .get-pack`)?.focus({ preventScroll: true });
 }
 $('close-dialog').addEventListener('click', closeDialog);
 dialog.addEventListener('cancel', event => { event.preventDefault(); closeDialog(); });
@@ -276,16 +291,29 @@ dialog.addEventListener('click', event => {
 });
 attachFileDrag($('drag-zone'), {
   getFile: () => preparedFile,
-  onStart: () => message('Le vrai File a été ajouté au départ du drag. Cela ne prouve pas que le navigateur le transmet à Bloxd.io.'),
-  onEnd: () => { if (preparedFile) message('Glisser-déposer terminé. Le résultat d’import est inconnu. Si Bloxd ne reçoit aucun fichier, utilisez le téléchargement.'); },
-  onError: () => message('Le navigateur a refusé de joindre le fichier au drag. Utilisez le téléchargement.', 'error'),
+  onStart: () => message('status.dragStart'),
+  onEnd: () => { if (preparedFile) message('status.dragEnd'); },
+  onError: () => message('status.dragError', 'error'),
 });
 $('drag-zone').addEventListener('keydown', event => {
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
-    message('Le glisser-déposer nécessite un geste réel à la souris. Le bouton Télécharger le ZIP est accessible au clavier.');
+    message('status.keyboard');
     $('download-button').focus();
   }
 });
 window.addEventListener('pagehide', closeDialog);
 renderTransfer();
+
+// Translation is a view update only: do not clear, refetch or redownload a pack.
+onLanguageChange(() => {
+  for (const category of CATEGORIES) {
+    $(`tab-${category.id}`).querySelector('.category-label').textContent = categoryText(category, 'label');
+  }
+  selectCategory(activeCategory);
+  if (selectedPack) renderPackDetails(selectedPack);
+  renderTransfer();
+  renderMessage();
+  renderProgress();
+});
+initI18n();
