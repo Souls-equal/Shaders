@@ -1,0 +1,53 @@
+{
+  "browser": "141.0.7390.0",
+  "results": [
+    {
+      "name": "English is the first-visit default, even with a French browser locale",
+      "passed": true
+    },
+    {
+      "name": "switching translates static copy, accessibility labels, metadata and the active empty category",
+      "passed": true
+    },
+    {
+      "name": "choice persists through reload and opens diagnostics in the same language",
+      "passed": true
+    },
+    {
+      "name": "language changes inside a prepared-pack dialog preserve the File, expanded sections and fetch count",
+      "passed": true
+    },
+    {
+      "name": "an existing error translates without a new request or download",
+      "passed": true
+    },
+    {
+      "name": "changing language while loading preserves the request and translates progress and completion",
+      "passed": true
+    },
+    {
+      "name": "diagnostic results from a trusted text drag translate without losing metadata",
+      "passed": true
+    },
+    {
+      "name": "both languages fit the catalogue, dialogs and diagnostic header at 320–1440px",
+      "passed": true
+    },
+    {
+      "name": "invalid saved preferences fall back to English",
+      "passed": true
+    },
+    {
+      "name": "blocked storage does not prevent switching languages",
+      "passed": true
+    },
+    {
+      "name": "static no-JavaScript fallback is English on both pages",
+      "passed": true
+    },
+    {
+      "name": "no JavaScript runtime errors",
+      "passed": true
+    }
+  ]
+}

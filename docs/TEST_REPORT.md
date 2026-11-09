@@ -2,6 +2,18 @@
 
 Date : 7 novembre 2026. Aucun succès d’import réel dans Bloxd.io n’est revendiqué.
 
+## Mise à jour bilingue EN / FR
+
+- Anglais par défaut, même avec un navigateur configuré en français ; choix explicite EN/FR mémorisé, disponible sur les deux pages et dans la fenêtre d’un pack.
+- Traduction des contenus statiques et dynamiques, descriptions/visuels, métadonnées, libellés accessibles, messages, unités et résultats du diagnostic.
+- **42 tests Node réussis**, dont 7 tests de traduction : parité et paramètres des dictionnaires, couverture des textes HTML/JS, descriptions et images, préférence, formats, erreurs et stockage inaccessible.
+- **24 contrôles navigateur de régression réussis**, maintenus explicitement en français.
+- **12 contrôles navigateur EN/FR réussis** : défaut anglais avec navigateur français, traduction complète, persistance après rechargement, synchronisation avec le diagnostic via le véritable événement de stockage, fichier préparé conservé sans requête supplémentaire, téléchargement identique, changement pendant un chargement, erreurs et résultats de diagnostic retraduits, préférence invalide, stockage bloqué et pages statiques sans JavaScript en anglais.
+- Responsive contrôlé dans les deux langues de 320 à 1440 px ; aucune erreur JavaScript dans les parcours testés.
+- Axe-core 4.10.2 : aucune violation automatique WCAG 2 A/AA sur le catalogue, une fenêtre illustrée et le diagnostic, dans les deux langues à 390 et 1440 px. Cela ne remplace pas un audit humain.
+
+Rapport courant : [language-evidence.json](language-evidence.json). Les rapports des intégrations précédentes ci-dessous restent des traces historiques. Les essais EN/FR n’établissent toujours pas une importation réussie dans Bloxd.io.
+
 ## Intégration d’Emberfall, Frostbound et Golden Hour
 
 Le catalogue contient désormais **six archives**, avec quatre cartes illustrées et une rangée séparée pour les deux anciennes versions d’Aurora.
