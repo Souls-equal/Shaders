@@ -2,7 +2,22 @@
 
 Date : 7 novembre 2026. Aucun succès d’import réel dans Bloxd.io n’est revendiqué.
 
-## Changements vérifiés
+## Intégration d’Emberfall, Frostbound et Golden Hour
+
+Le catalogue contient désormais **six archives**, avec quatre cartes illustrées et une rangée séparée pour les deux anciennes versions d’Aurora.
+
+- Noms, auteur et version repris des manifestes : Emberfall, Frostbound et **Golden Hour** (`sunrise-v5.zip`), auteur **Arena Agent**, version de pack **1.0.1**, API shader **5**.
+- ZIP récupérés tels qu’ajoutés au dépôt : octets inchangés, CRC des archives vérifiés à l’inspection, taille et SHA-256 publiés contrôlés par le chargeur et les tests.
+- Trois illustrations IA distinctes, locales et optimisées WebP ; libellé explicite sur les cartes et dans les fenêtres. Aucune capture réelle ni validation du rendu en jeu n’est prétendue.
+- **35 tests Node réussis** : 24 du chargeur et 11 du catalogue, dont couverture de tous les ZIP, métadonnées des nouveaux packs et ressources des visuels.
+- **24 contrôles navigateur réussis** : régression de tous les anciens comportements, téléchargements identiques pour les six archives, chargement/décodage des quatre images, correspondance des images dans chaque fenêtre et absence d’image résiduelle sur les archives.
+- Axe-core Playwright 4.10.2 : zéro violation automatique WCAG 2 A/AA pour le catalogue et les quatre fenêtres illustrées, à 390 et 1440 px. Cela ne remplace pas un audit humain.
+
+Observations actuelles : [shader-integration-evidence.json](shader-integration-evidence.json). Les résultats 29/20 ci-dessous et [catalogue-browser-evidence.json](catalogue-browser-evidence.json) sont le rapport initial conservé pour historique.
+
+Le retour utilisateur sous **Edge 156 sur Windows** indique un vrai drop (`isTrusted: true`), mais **0 fichier** et seulement `text/plain` au récepteur GitHub Pages. C’est une observation utilisateur, pas un test Edge exécuté par notre automatisation. Le téléchargement reste recommandé ; l’intégration de ces shaders ne prétend pas corriger ce transport ni démontrer un import réel dans le jeu.
+
+## Changements vérifiés (catalogue initial)
 
 - Trois dossiers racine : `shaders/`, `schems/`, `t-packs/`.
 - Aurora V12, V9 et Original déplacées sans modification d’octets ; taille et SHA-256 vérifiés contre le catalogue.

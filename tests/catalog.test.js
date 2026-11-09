@@ -37,3 +37,39 @@ for (const pack of PACKS) {
     assert.deepEqual(new Uint8Array(await file.arrayBuffer()), new Uint8Array(bytes));
   });
 }
+
+test('every published shader ZIP appears in the catalogue', async () => {
+  const files = (await readdir(new URL('shaders/', root))).filter(name => name.endsWith('.zip')).sort();
+  assert.deepEqual(PACKS.filter(pack => pack.category === 'shaders').map(pack => pack.filename).sort(), files);
+});
+
+test('the three new packs keep manifest names, versions, authors and API metadata', () => {
+  for (const [id, name] of [['emberfall-v5', 'Emberfall'], ['frostbound-v5', 'Frostbound'], ['sunrise-v5', 'Golden Hour']]) {
+    const pack = PACKS.find(pack => pack.id === id);
+    assert.ok(pack);
+    assert.equal(pack.name, name);
+    assert.equal(pack.version, '1.0.1');
+    assert.equal(pack.apiVersion, 5);
+    assert.equal(pack.author, 'Arena Agent');
+    assert.ok(!pack.archived);
+  }
+});
+
+test('each current shader has a distinct local WebP illustration with accessible metadata', async () => {
+  const current = PACKS.filter(pack => pack.category === 'shaders' && !pack.archived);
+  assert.equal(current.length, 4);
+  assert.equal(new Set(current.map(pack => pack.preview?.src)).size, current.length);
+  for (const pack of current) {
+    assert.equal(pack.preview.type, 'illustration');
+    assert.ok(pack.preview.alt.length > 20);
+    assert.ok(pack.preview.tagline);
+    assert.ok(pack.preview.theme);
+    assert.ok(Number.isInteger(pack.preview.width) && pack.preview.width > 0);
+    assert.ok(Number.isInteger(pack.preview.height) && pack.preview.height > 0);
+    assert.match(pack.preview.src, /^assets\/[a-z-]+\.webp$/);
+    const bytes = await readFile(new URL(pack.preview.src, root));
+    assert.equal(bytes.toString('ascii', 0, 4), 'RIFF');
+    assert.equal(bytes.toString('ascii', 8, 12), 'WEBP');
+    assert.ok(bytes.length < 500000);
+  }
+});
