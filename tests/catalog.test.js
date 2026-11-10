@@ -5,8 +5,8 @@ import { CATEGORIES, PACKS } from '../js/config.js';
 import { loadShader } from '../js/shader-loader.js';
 
 const root = new URL('../', import.meta.url);
-test('root separates shaders, schematics and texture packs; no loose ZIPs', async () => {
-  assert.deepEqual(CATEGORIES.map(category => category.id), ['shaders', 'schems', 't-packs']);
+test('four categories use the three asset folders; no loose ZIPs', async () => {
+  assert.deepEqual(CATEGORIES.map(category => category.id), ['shaders', 'schems', 'ui', 't-packs']);
   for (const category of CATEGORIES) assert.ok((await stat(new URL(category.folder, root))).isDirectory());
   assert.equal((await readdir(root)).some(name => /\.zip$/i.test(name)), false);
 });

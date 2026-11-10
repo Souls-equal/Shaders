@@ -1,8 +1,11 @@
+import { UI_PACKS } from './ui-packs.js';
+
 // Static catalogue: add each published archive here after putting it in its
 // category folder. Relative paths also work on GitHub Pages project sites.
 export const CATEGORIES = Object.freeze([
   Object.freeze({ id: 'shaders', label: 'Shaders', folder: 'shaders', icon: 'spark', description: 'Une nouvelle lumière sur vos mondes.' }),
   Object.freeze({ id: 'schems', label: 'Schematics', folder: 'schems', icon: 'cube', description: 'De nouvelles idées à construire, bloc après bloc.' }),
+  Object.freeze({ id: 'ui', label: 'UI only', folder: 't-packs', icon: 'layers', description: 'L’interface du jeu, sans changer les textures des blocs.' }),
   Object.freeze({ id: 't-packs', label: 'Texture packs', folder: 't-packs', icon: 'layers', description: 'Un autre regard sur chaque bloc.' }),
 ]);
 
@@ -70,4 +73,5 @@ export const PACKS = Object.freeze([
     expectedSizeBytes: 16789,
     sha256: 'f83f701ce164341fb41344ff0df502ff823ec1db92579101c22ed1ecdf1d91d4',
   }),
+  ...UI_PACKS.map(pack => Object.freeze({ ...DEFAULTS, ...pack })),
 ]);

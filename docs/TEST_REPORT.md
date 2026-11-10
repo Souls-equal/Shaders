@@ -2,6 +2,20 @@
 
 Date : 7 novembre 2026. Aucun succès d’import réel dans Bloxd.io n’est revendiqué.
 
+## UI uniquement — thèmes Nebula et variantes de police
+
+- Sources récupérées depuis l’ajout utilisateur sur `main` (`2b8163b`), conservées sans modification : 8 thèmes × 2 variantes, soit **16 dossiers CSS**.
+- Quatrième catégorie **UI only / UI uniquement**, séparée des shaders et des textures de blocs ; 8 cartes, chacune avec **font-normal** et **font-pixel**. L’onglet compte les 16 variantes, le pied de liste donne les deux nombres.
+- 16 ZIP déterministes contenant seulement `css/nebula.css`, avec les octets originaux. Taille et SHA-256 calculés à partir des nouvelles archives, intégrés au catalogue commun et contrôlés par le chargeur existant.
+- Libellé **V5** repris des en-têtes des sources, sans API shader ni auteur inventé. Les couleurs sont des indicateurs, pas des captures du jeu.
+- La variante pixel référence Google Fonts ; la fenêtre précise que la police externe et le CSS doivent être autorisés par le jeu. Aucune police externe et aucun CSS de pack ne sont chargés sur le site.
+- **62 tests Node réussis** : les 42 précédents, 16 passages des nouveaux ZIP dans le chargeur réel, et 4 tests UI spécifiques (regroupement, couverture des sources, intégrité du contenu, reproductibilité).
+- **24 régressions navigateur + 12 contrôles de langue + 23 contrôles UI réussis**, sous Chromium 141. Les 16 variantes ont été téléchargées explicitement et comparées octet pour octet aux ZIP publiés.
+- Contrôles additionnels : traduction après préparation conservant la bonne variante sans nouveau Fetch ; fermeture d’un chargement normal puis ouverture pixel sans octets périmés ; HTTP 404 sans substitution silencieuse ; retour du focus au bon bouton ; aucun chargement de CSS utilisateur ni requête Google Fonts.
+- Deux langues, grilles et fenêtres dépliées de 320 à 1440 px : pas de débordement horizontal. Axe-core Playwright 4.10.2 (moteur 4.10.3) : **0 violation automatique WCAG 2 A/AA** sur 8 vues UI (grille/fenêtre × EN/FR × 390/1440 px), sans prétendre à un audit humain complet.
+
+Observations : [ui-pack-evidence.json](ui-pack-evidence.json). Les rapports suivants restent historiques. Aucun import ni rendu réel dans Bloxd.io n’est confirmé par ces essais.
+
 ## Mise à jour bilingue EN / FR
 
 - Anglais par défaut, même avec un navigateur configuré en français ; choix explicite EN/FR mémorisé, disponible sur les deux pages et dans la fenêtre d’un pack.

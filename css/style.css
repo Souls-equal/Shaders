@@ -330,3 +330,19 @@ progress::-moz-progress-bar { background: #c39bf1; }
 @media (max-width: 400px) {
   .header:not(.diagnostic-header) .header-actions .github-link { display: none; }
 }
+
+/* UI themes are grouped by colour, with an explicit archive for each font. */
+.ui-card { border-top: 2px solid var(--ui-accent); }
+.ui-swatch { display: flex; align-items: center; gap: 18px; margin: 18px 0; padding: 22px; border: 1px solid var(--ui-accent); border-radius: 10px; color: var(--ui-accent); background: #14141b; }
+.ui-swatch > svg { width: 26px; height: 26px; }
+.ui-swatch > span { font-size: 28px; font-weight: 700; }
+.ui-swatch-lines { margin-left: auto; }
+.ui-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: auto; padding-top: 16px; }
+.ui-choice { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; text-align: left; }
+.ui-choice .pack-size { flex-basis: 100%; order: 2; font-size: 10px; }
+.ui-caption { font-size: 10px; color: #b8b2c4; margin: 14px 0 0; line-height: 1.6; }
+@media (max-width: 760px) {
+  .category-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .category-tab { justify-content: center; }
+}
+.ui-pack-note { color: #c3bbd2; font-size: 12px; line-height: 1.7; border-left: 2px solid #a78bfa; padding-left: 12px; }
