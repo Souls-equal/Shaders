@@ -30,7 +30,7 @@ function icon(name) {
   node.append(use);
   return node;
 }
-function packTitle(pack) { return `${pack.name} · ${pack.version}`; }
+function packTitle(pack) { return `${pack.name} · ${pack.version}${pack.font ? ` · ${pack.font}` : ''}`; }
 function message(key = '', tone = 'info', params = {}) {
   messageState = { key, tone, params };
   renderMessage();
@@ -83,7 +83,9 @@ function clearFile(announce = false) {
 
 function renderPackDetails(pack) {
   $('dialog-title').textContent = packTitle(pack);
-  $('dialog-meta').textContent = `${pack.author} · ZIP · ${formatSize(pack.expectedSizeBytes)}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`;
+  $('ui-pack-note').hidden = pack.category !== 'ui';
+  $('ui-pack-note').textContent = pack.category === 'ui' ? `${t('ui.versionNote')} ${t(pack.font === 'font-pixel' ? 'ui.pixelNote' : 'ui.normalNote')}` : '';
+  $('dialog-meta').textContent = `${pack.author || t('details.unknownAuthor')} · ZIP · ${formatSize(pack.expectedSizeBytes)}${pack.apiVersion ? ` · API ${pack.apiVersion}` : ''}`;
   $('dialog-preview').hidden = !pack.preview;
   if (pack.preview) {
     $('dialog-preview-image').src = pack.preview.src;
@@ -96,7 +98,8 @@ function renderPackDetails(pack) {
   const list = $('file-metadata');
   list.replaceChildren();
   for (const [key, value] of [
-    ['details.author', pack.author], ['details.version', pack.version],
+    ['details.author', pack.author || t('details.unknownAuthor')], ['details.version', pack.version],
+    ...(pack.font ? [['details.font', pack.font], ['details.scope', t('ui.scope')]] : []),
     ...(pack.apiVersion ? [['details.api', String(pack.apiVersion)]] : []),
     ['details.file', pack.filename], ['details.size', t('details.bytes', { count: number(pack.expectedSizeBytes) })],
     ['details.source', new URL(pack.url, document.baseURI).href], ['SHA-256', pack.sha256 || t('details.noHash')],
@@ -148,7 +151,7 @@ function makeCard(pack) {
     cube.append(icon('cube'));
     body.append(cube);
   }
-  body.append(top, element('h3', '', pack.name), element('p', 'author', t('pack.by', { author: pack.author, api: pack.apiVersion ? ` · API ${pack.apiVersion}` : '' })), element('p', 'pack-description', packText(pack, 'description')));
+  body.append(top, element('h3', '', pack.name), element('p', 'author', t('pack.by', { author: pack.author || t('details.unknownAuthor'), api: pack.apiVersion ? ` · API ${pack.apiVersion}` : '' })), element('p', 'pack-description', packText(pack, 'description')));
   const bottom = element('div', 'pack-bottom');
   const specs = element('span', 'pack-size', `ZIP · ${formatSize(pack.expectedSizeBytes)}`);
   const button = element('button', pack.featured ? 'get-pack primary-button' : 'get-pack secondary-button', t('pack.get'));
@@ -158,6 +161,33 @@ function makeCard(pack) {
   button.addEventListener('click', () => showPack(pack));
   bottom.append(specs, button);
   body.append(bottom);
+  card.append(body);
+  return card;
+}
+
+function makeUICard(variants) {
+  const pack = variants[0];
+  const card = element('article', 'pack-card ui-card');
+  card.dataset.uiFamily = pack.family;
+  card.style.setProperty('--ui-accent', pack.color);
+  const body = element('div', 'pack-body');
+  const top = element('div', 'pack-topline');
+  top.append(element('span', 'category-badge', t('ui.badge')), element('span', 'pack-version', pack.version));
+  const swatch = element('div', 'ui-swatch');
+  swatch.setAttribute('aria-hidden', 'true');
+  swatch.append(icon('layers'), element('span', '', 'Aa'), element('span', 'ui-swatch-lines', '≡'));
+  body.append(top, swatch, element('h3', '', pack.name), element('p', 'pack-description', packText(pack, 'description')));
+  const choices = element('div', 'ui-choices');
+  for (const variant of variants) {
+    const button = element('button', 'get-pack secondary-button ui-choice');
+    button.type = 'button';
+    button.dataset.packId = variant.id;
+    button.setAttribute('aria-label', t('pack.getAria', { pack: packTitle(variant) }));
+    button.append(element('span', '', variant.font), element('span', 'pack-size', `ZIP · ${formatSize(variant.expectedSizeBytes)}`), icon('arrow'));
+    button.addEventListener('click', () => showPack(variant));
+    choices.append(button);
+  }
+  body.append(choices, element('p', 'ui-caption', t('ui.swatch')));
   card.append(body);
   return card;
 }
@@ -178,7 +208,15 @@ function selectCategory(id, { focus = false } = {}) {
   const grid = $('pack-grid');
   grid.replaceChildren();
   let archivesLabelled = false;
+  const renderedFamilies = new Set();
   for (const pack of packs) {
+    if (pack.family && pack.category === 'ui') {
+      if (!renderedFamilies.has(pack.family)) {
+        grid.append(makeUICard(packs.filter(item => item.family === pack.family)));
+        renderedFamilies.add(pack.family);
+      }
+      continue;
+    }
     if (pack.archived && !archivesLabelled) {
       const heading = element('div', 'catalog-divider');
       heading.append(element('h3', '', t('archives.title')), element('span', '', t('archives.text')));
@@ -191,8 +229,12 @@ function selectCategory(id, { focus = false } = {}) {
     const empty = element('div', 'empty-state');
     const emptyIcon = element('span', 'empty-icon');
     emptyIcon.append(icon(category.icon));
-    empty.append(emptyIcon, element('h3', '', t('empty.title')), element('p', '', t(id === 'schems' ? 'empty.schems' : 'empty.t-packs')), element('span', 'empty-caption', t('empty.caption')));
+    empty.append(emptyIcon, element('h3', '', t('empty.title')), element('p', '', t(id === 'schems' ? 'empty.schems' : id === 'ui' ? 'empty.ui' : 'empty.t-packs')), element('span', 'empty-caption', t('empty.caption')));
     grid.append(empty);
+  }
+  if (id === 'ui' && renderedFamilies.size) {
+    $('library-status').textContent = t('ui.count', { themes: number(renderedFamilies.size), count: number(packs.length) });
+    return;
   }
   $('library-status').textContent = t(packs.length === 1 ? 'catalog.one' : 'catalog.many', { count: number(packs.length), category: categoryText(category, 'label') });
 }
@@ -275,7 +317,7 @@ function closeDialog() {
   clearFile();
   selectedPack = null;
   if (dialog.open) dialog.close();
-  if (returnId) document.querySelector(`[data-pack-id="${CSS.escape(returnId)}"] .get-pack`)?.focus({ preventScroll: true });
+  if (returnId) document.querySelector(`[data-pack-id="${CSS.escape(returnId)}"].get-pack, [data-pack-id="${CSS.escape(returnId)}"] .get-pack`)?.focus({ preventScroll: true });
 }
 $('close-dialog').addEventListener('click', closeDialog);
 dialog.addEventListener('cancel', event => { event.preventDefault(); closeDialog(); });

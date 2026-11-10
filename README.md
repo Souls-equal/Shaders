@@ -1,6 +1,6 @@
 # Bloxd File Share
 
-Bibliothèque statique de packs pour Bloxd.io, en HTML/CSS/JavaScript moderne, sans framework ni dépendance à l’exécution. Trois catégories, un catalogue configurable et une fenêtre de récupération commune à chaque pack.
+Bibliothèque statique de packs pour Bloxd.io, en HTML/CSS/JavaScript moderne, sans framework ni dépendance à l’exécution. Quatre catégories, un catalogue configurable et une fenêtre de récupération commune à chaque pack.
 
 > **Le téléchargement volontaire est désormais la méthode recommandée.** Un vrai `File` en mémoire n’est pas nécessairement transporté intact par le drag natif vers un autre onglet. Le glisser-déposer reste une expérience, pas une promesse d’import dans Bloxd.io.
 
@@ -36,12 +36,13 @@ Sous Windows, utiliser `python` si nécessaire. Ne pas ouvrir la page en `file:/
 │   ├── frostbound-v5.zip
 │   └── sunrise-v5.zip           # Nom déclaré : Golden Hour
 ├── schems/                     # Schematics à publier
-├── t-packs/                    # Texture packs à publier
+├── t-packs/                    # Sources Nebula + 16 ZIP UI ; futurs packs de textures
 ├── index.html                  # Catalogue et fenêtre de récupération
 ├── diagnostics.html            # Récepteur de vrais glisser-déposer
 ├── css/style.css
 ├── js/
 │   ├── config.js               # Catégories et catalogue PACKS
+│   ├── ui-packs.js             # Métadonnées UI générées : variantes, tailles et SHA-256
 │   ├── app.js                  # Filtres, cartes, fenêtre, téléchargement et nettoyage
 │   ├── i18n.js                 # EN/FR, préférence et formats localisés
 │   ├── translations.js         # Tous les textes du site dans les deux langues
@@ -55,11 +56,11 @@ Sous Windows, utiliser `python` si nécessaire. Ne pas ouvrir la page en `file:/
 └── netlify.toml
 ```
 
-Les trois archives Aurora ont été déplacées/renommées **sans modifier leurs octets**. Les anciens chemins à la racine ne sont plus utilisés. Les dossiers vides `schems/` et `t-packs/` sont conservés avec `.gitkeep`.
+Les trois archives Aurora ont été déplacées/renommées **sans modifier leurs octets**. Les anciens chemins à la racine ne sont plus utilisés. Le dossier `schems/` est conservé avec `.gitkeep`. Les packs UI et les futurs packs de textures partagent le dossier `t-packs/`, mais pas leur catégorie affichée.
 
 ### Catalogue actuel
 
-Six archives sont publiées : quatre shaders actuels avec un visuel distinct, puis deux anciennes versions d’Aurora regroupées sous « Les versions précédentes ». Les métadonnées proviennent des manifestes : **K4miNoK4mi** pour Aurora, **Arena Agent** pour les trois nouveaux packs ; tous déclarent `apiVersion: 5`.
+Six archives de shaders sont publiées : quatre shaders actuels avec un visuel distinct, puis deux anciennes versions d’Aurora regroupées sous « Les versions précédentes ». Les métadonnées proviennent des manifestes : **K4miNoK4mi** pour Aurora, **Arena Agent** pour les trois nouveaux packs ; tous déclarent `apiVersion: 5`.
 
 | Version | Chemin | Taille réelle | SHA-256 |
 |---|---|---:|---|
@@ -72,10 +73,38 @@ Six archives sont publiées : quatre shaders actuels avec un visuel distinct, pu
 
 L’archive d’origine n’a pas de numéro confirmé : elle n’est pas rebaptisée arbitrairement V10 ou V11. Les catégories Schematics et Texture packs n’ont pas encore de contenu ; le site l’indique au lieu de présenter de faux packs. Les quatre visuels sont des illustrations IA, **pas des captures en jeu** ; les cartes et fenêtres le précisent. Les ambiances et descriptions des nouveaux packs suivent les intentions et réglages présents dans leurs fichiers WGSL, sans promettre un résultat testé dans Bloxd.io. `sunrise-v5.zip` conserve son nom de fichier, mais s’affiche sous **Golden Hour**, son nom dans `pack.json`. Le suffixe `v5` désigne ici l’API ; leur version de pack déclarée est **1.0.1**, affichée séparément.
 
+## UI uniquement : Nebula
+
+L’onglet **UI only / UI uniquement** est distinct des shaders et des packs de textures. Il contient **8 thèmes avec 2 variantes chacun, soit 16 ZIP** :
+
+- Nebula Cosmic Purple
+- Nebula Emerald Green
+- Nebula Imperial Gold
+- Nebula Inferno Red
+- Nebula Ocean Blue
+- Nebula Original Cyan
+- Nebula Sakura Pink
+- Nebula Solar Orange
+
+Chaque carte regroupe deux boutons : **font-normal** et **font-pixel**. Ils ouvrent la même fenêtre de récupération, avec la variante dans le titre et les détails, un nom de ZIP unique, sa taille exacte et son SHA-256. Le compteur d’onglet indique 16 variantes ; le pied de liste distingue 8 thèmes et 16 ZIP. Les indicateurs de couleur ne sont **pas des captures en jeu** et n’appliquent pas les CSS des packs à ce site.
+
+Les sources ajoutées dans `t-packs/Nebula_*/css/nebula.css` sont conservées **octet pour octet**. Chaque ZIP contient uniquement `css/nebula.css`, sans dossier parent supplémentaire ni manifeste inventé. **V5** reprend le libellé d’en-tête des CSS, pas une version de l’API du jeu. Aucun auteur n’étant spécifié, le site n’en invente pas.
+
+**Attention à font-pixel :** les CSS fournis référencent Pixelify Sans hébergée sur Google Fonts (`fonts.gstatic.com`). La police n’est pas incorporée dans les ZIP ; son affichage dépend de l’importeur du jeu, des règles CSS autorisées et du chargement externe. Le site ne charge ni cette police ni les CSS des packs. Le téléchargement est vérifié, mais l’import et le rendu dans Bloxd.io ne sont pas prétendus testés.
+
+### Régénérer les archives UI
+
+```sh
+npm run build:ui    # Python 3 : ZIP déterministes et js/ui-packs.js
+npm run check:ui    # Vérifier les ZIP et les métadonnées sans modifier de fichier
+```
+
+`tools/build-ui-packs.py` conserve les sources, fixe les dates des entrées ZIP et génère les tailles/hashes à partir des octets réellement publiés. `js/config.js` incorpore ces entrées au catalogue commun avec la catégorie `ui`. Les textes EN/FR propres aux packs sont dans leurs champs `translations`; les libellés communs sont dans `js/translations.js`. Pour ajouter un thème Nebula, compléter la liste `THEMES`, fournir les deux dossiers source et régénérer. Python sert à la préparation et aux tests, **pas au fonctionnement du site statique**.
+
 ## Récupérer un pack
 
-1. Sélectionner **Shaders**, **Schematics** ou **Texture packs**.
-2. Cliquer **Obtenir le pack** sur la version souhaitée. Cela ouvre une fenêtre accessible (focus, Escape, fermeture par la croix ou le fond), **sans télécharger ni même récupérer l’archive**.
+1. Sélectionner **Shaders**, **Schematics**, **UI uniquement** ou **Texture packs**.
+2. Cliquer **Obtenir le pack** sur la version souhaitée, ou **font-normal / font-pixel** pour un thème UI. Cela ouvre une fenêtre accessible (focus, Escape, fermeture par la croix ou le fond), **sans télécharger ni même récupérer l’archive**.
 3. Choisir une méthode :
    - **Télécharger le ZIP**, recommandé : récupère les octets, vérifie la source, la taille, la structure ZIP et le SHA-256, puis lance un téléchargement uniquement parce que l’utilisateur l’a demandé. Le fichier porte un nom distinct pour chaque version. Le sélectionner ensuite dans le véritable importeur du jeu.
    - **Essayer le glisser-déposer**, expérimental : déplier cette option, puis cliquer **Préparer en mémoire**. Aucun enregistrement sur disque. Un vrai geste de souris peut ensuite attacher ce `File` au drag, mais sa réception par le jeu reste non garantie.
@@ -98,7 +127,7 @@ python3 -c "import pathlib,hashlib; p=pathlib.Path('shaders/mon-pack.zip'); prin
 Object.freeze({
   ...DEFAULTS,
   id: 'mon-pack-v1',             // Unique, stable.
-  category: 'shaders',           // 'shaders', 'schems' ou 't-packs'.
+  category: 'shaders',           // 'shaders', 'schems', 'ui' ou 't-packs'.
   name: 'Mon pack',
   version: 'V1',
   author: 'Créateur',
@@ -149,18 +178,19 @@ Pour tester Edge : ouvrir le catalogue et le récepteur dans deux onglets réels
 ## Tests
 
 ```sh
-npm test                        # Node 22+, sans dépendance : 42 tests.
+npm test                        # Node 22+, sans bibliothèque de test : 62 tests (Python 3 pour vérifier le packaging UI).
 
 # Contrôles navigateur facultatifs ; serveur local déjà lancé :
 npm ci
 npx playwright install --with-deps chromium
 npm run test:browser            # 24 contrôles UI, téléchargements et erreurs.
 npm run test:languages          # 12 contrôles EN/FR, stockage, diagnostics et état conservé.
+npm run test:ui                 # 23 contrôles UI : 16 téléchargements, variantes, EN/FR et axe-core.
 ```
 
 Le script navigateur vérifie entre autres les octets téléchargés des six archives et les visuels propres à chaque shader, l’absence de téléchargement à l’ouverture/préparation, l’annulation/fermeture pendant le chargement, la non-réutilisation d’un autre pack, la navigation clavier et l’affichage mobile. Des entrées ZIP de schematics/texture packs **uniquement injectées dans les tests** vérifient la réutilisation de la même fenêtre ; aucun faux pack n’est publié sur le site.
 
-Les sorties sont dans `test-results/` (ignoré par Git). Les observations EN/FR sont dans `docs/language-evidence.json`. Les observations de l’intégration des shaders sont dans `docs/shader-integration-evidence.json` ; `docs/catalogue-browser-evidence.json` conserve le rapport antérieur à l’ajout des trois shaders. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
+Les sorties sont dans `test-results/` (ignoré par Git). Les observations UI courantes sont dans `docs/ui-pack-evidence.json`. Les observations EN/FR sont dans `docs/language-evidence.json`. Les observations de l’intégration des shaders sont dans `docs/shader-integration-evidence.json` ; `docs/catalogue-browser-evidence.json` conserve le rapport antérieur à l’ajout des trois shaders. Variables optionnelles : `BROWSER_EXECUTABLE`, `BROWSER_CHANNEL` (par exemple `msedge` si installé), `TEST_BASE_URL` et `PLAYWRIGHT_MODULE_PATH` pour une installation externe de Playwright. Même avec Edge, le script ne remplace pas un test manuel entre deux onglets graphiques et dans le jeu réel.
 
 ## Hébergement
 

@@ -39,7 +39,7 @@ try {
     assert.equal(await page.locator('meta[name=description]').getAttribute('content'), messages.en['page.description']);
     assert.equal(await headerToggle.getAttribute('aria-label'), 'Switch to French');
     await staticCopy(page, 'en');
-    for (const pack of PACKS) {
+    for (const pack of PACKS.filter(pack => pack.category === 'shaders')) {
       const card = page.locator(`[data-pack-id="${pack.id}"]`);
       assert.equal(await card.locator('.pack-description').textContent(), messages.en[`pack.${pack.id}.description`]);
       if (pack.preview) assert.equal(await card.locator('img').getAttribute('alt'), messages.en[`pack.${pack.id}.alt`]);

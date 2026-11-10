@@ -29,10 +29,10 @@ test('every pack description, image alt, theme and tagline is translated', () =>
   for (const pack of PACKS) {
     for (const field of pack.preview ? ['description', 'alt', 'theme', 'tagline'] : ['description']) {
       const key = `pack.${pack.id}.${field}`;
-      assert.ok(messages.en[key], key);
-      assert.ok(messages.fr[key], key);
+      assert.ok(pack.translations?.en?.[field] || messages.en[key], key);
+      assert.ok(pack.translations?.fr?.[field] || messages.fr[key], key);
       const source = field === 'description' ? pack.description : pack.preview[field];
-      assert.equal(messages.fr[key], source);
+      assert.equal(pack.translations?.fr?.[field] || messages.fr[key], source);
     }
   }
   for (const category of CATEGORIES) {

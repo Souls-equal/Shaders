@@ -1,0 +1,481 @@
+/* NEBULA UI V5 — compatible with Bloxd's custom pack CSS loader.
+ * One simple class per rule; no nested selectors, pseudo-classes, variables,
+ * at-rules, comma lists, or unsupported properties. No block textures.
+ */
+
+.HomePageBackgroundContainer {
+  background-color: #302810 !important;
+}
+
+.HomeHeaderInner {
+  background: linear-gradient(90deg, rgba(32, 27, 11, .88), rgba(59, 49, 20, .77)) !important;
+  box-shadow: 0 8px 28px rgba(22, 17, 3, .22) !important;
+}
+
+.Title {
+  color: #f1faff !important;
+  text-shadow: 0 2px 0 #655629, 0 0 24px rgba(237, 184, 83, .35) !important;
+}
+
+.MenuSideBarSectionTitle {
+  color: #d3c7a7 !important;
+}
+
+.GameCardContainer {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(22, 17, 3, .32) !important;
+  transition: transform .16s ease, box-shadow .16s ease !important;
+}
+
+.HomeSearchPanel {
+  background: linear-gradient(155deg, #3d3418, #27210d) !important;
+  border: 1px solid #6e5f34 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 48px rgba(19, 15, 2, .55), inset 0 1px rgba(255,255,255,.05) !important;
+  color: #eaf5ff !important;
+}
+
+.SocialBarInner {
+  background: linear-gradient(180deg, #403618, #2e2711) !important;
+  color: #eaf5ff !important;
+}
+
+.MenuSideBarBodyTab {
+  border-radius: 8px 0 0 8px !important;
+  transition: none !important;
+  color: #e5dbc3 !important;
+}
+
+.ActiveMenuSideBarBodyTab {
+  background-color: #584b27 !important;
+  color: #f0ffff !important;
+  background: linear-gradient(90deg, rgba(182, 144, 67,.12), rgba(182, 144, 67,.25)) !important;
+}
+
+.MenuBody {
+  background-color: #2d2610 !important;
+}
+
+.TabButton {
+  transition: filter .15s ease, transform .15s ease !important;
+}
+
+.SecondaryButton {
+  background-color: #514625 !important;
+  border-color: #918050 !important;
+  color: #f0f8ff !important;
+  border-radius: 8px !important;
+}
+
+.ActiveTabButton {
+  border-color: #edb853 !important;
+}
+
+.HomeSearchBar {
+  background-color: #261f0b !important;
+  border: 1px solid #7c6c40 !important;
+  border-radius: 9px !important;
+}
+
+.HomeSearchInput {
+  color: #f3fbff !important;
+}
+
+.KeyboardButtonRepresentation {
+  background-color: #574a26 !important;
+  border: 1px solid #b6a371 !important;
+  border-radius: 5px !important;
+  color: white !important;
+  box-shadow: 0 2px 0 #2b2410 !important;
+}
+
+.HotBar {
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.48));
+}
+
+.InvenItem {
+  background-color: rgba(40, 33, 13, .83) !important;
+  border: 1px solid #897749 !important;
+  border-radius: 9px !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.05) !important;
+  background: linear-gradient(145deg, #504321, #382e13) !important;
+}
+
+.HotbarItemNumber {
+  color: #fff2d9 !important;
+  text-shadow: 0 1px 3px #000 !important;
+}
+
+.BottomScreenStatBarWrapper {
+  opacity: 1 !important;
+}
+
+.BottomScreenStatBarBackground {
+  background-color: rgba(31, 25, 9, .86) !important;
+  border: 1px solid rgba(218, 201, 160, .55) !important;
+  border-radius: 7px !important;
+  overflow: hidden !important;
+}
+
+.HealthBar {
+  background-color: #ef536b !important;
+  background-image: linear-gradient(90deg, #bf3154, #ff7182) !important;
+  box-shadow: inset 0 2px rgba(255,255,255,.2) !important;
+}
+
+.ShieldBar {
+  background-color: #58bde5 !important;
+  background-image: linear-gradient(90deg, #2d80bf, #81e4f0) !important;
+  box-shadow: inset 0 2px rgba(255,255,255,.24) !important;
+}
+
+.BottomScreenStatBarText {
+  color: white !important;
+  text-shadow: 0 1px 3px #000 !important;
+}
+
+.AuraBar {
+  background-color: rgba(31, 25, 9,.88) !important;
+  border: 1px solid #a6976f !important;
+  border-radius: 7px !important;
+  overflow: hidden !important;
+}
+
+.AuraBarBackground {
+  background-color: #e0cd68 !important;
+  background-image: linear-gradient(90deg, #e0ca5f, #e8b75b) !important;
+}
+
+.Crosshair {
+  color: #ffe477 !important;
+  text-shadow: 0 0 3px #000, 0 0 6px #000 !important;
+}
+
+.SegmentedToggle {
+  background-color: #312911 !important;
+  border-color: #7c6c40 !important;
+  border-radius: 8px !important;
+}
+
+.SegmentedToggleOptionSelected {
+  background-color: #786431 !important;
+  color: #f4ffff !important;
+}
+
+.InvenItemUnfilled {
+  background-color: rgba(40, 33, 14, .78) !important;
+}
+
+.CraftableItemNotEnoughIngredients {
+  filter: saturate(.72);
+}
+
+.ChatInputWrapper {
+  background-color: rgba(39, 32, 12, .94) !important;
+  border: 1px solid #968354 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.35) !important;
+}
+
+.ChatInput {
+  color: #f6ffff !important;
+}
+
+.ChatMessageBackground {
+  border-radius: 5px !important;
+}
+
+.ChatInputChannel {
+  color: #f0ce8e !important;
+}
+
+.LBTableTRYou {
+  background-color: rgba(237, 184, 83,.18) !important;
+}
+
+.ShopMenuBody {
+  background: radial-gradient(ellipse at 50% 4%, #52441d 0%, #2d2610 48%, #241e0b 100%) !important;
+}
+
+.ShopCategoryDescription {
+  background: linear-gradient(110deg, #55441c, #453b1b) !important;
+  border: 1px solid #9c834c !important;
+  border-radius: 10px !important;
+  color: #eafaff !important;
+  box-shadow: 0 7px 20px rgba(20, 16, 2,.3) !important;
+}
+
+.ShopItem {
+  background-color: #43391b !important;
+  background-image: linear-gradient(145deg, #594b26 0%, #3d3317 78%) !important;
+  border: 1px solid #897749 !important;
+  border-radius: 13px !important;
+  color: #edfaff !important;
+  box-shadow: 0 9px 22px rgba(20, 15, 0,.34), inset 0 1px 0 rgba(255,255,255,.07) !important;
+  transition: none !important;
+}
+
+.ShopItemLeft {
+  border-radius: 11px !important;
+  background: linear-gradient(145deg, rgba(192, 159, 85,.22), rgba(37, 30, 10,.35)) !important;
+  box-shadow: 0 0 0 1px rgba(223, 196, 138,.16), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+.ShopItemHeaderTitle {
+  color: #f4fcff !important;
+  font-weight: 800 !important;
+  letter-spacing: .015em !important;
+  text-shadow: 0 2px 6px rgba(0,0,0,.5) !important;
+}
+
+.ShopItemHeaderDescription {
+  color: #dcd1b6 !important;
+  line-height: 1.4 !important;
+}
+
+.ShopItemNoInput {
+  background-color: #3d3725 !important;
+  background-image: linear-gradient(145deg, #4b4532, #3e3824) !important;
+}
+
+.ShopItemNoInputCanBuy {
+  background-color: #564217 !important;
+  background-image: linear-gradient(145deg, #6a5220, #473916) !important;
+}
+
+.ShopItemNoInputSelected {
+  background-color: #5c4c24 !important;
+  background-image: linear-gradient(145deg, #6f5e33, #4f411c) !important;
+  border-color: #f0c983 !important;
+  box-shadow: 0 0 0 2px rgba(237, 184, 83,.32), 0 9px 22px rgba(20, 15, 0,.34) !important;
+}
+
+.ShopItemEnchantInfo {
+  background: #302810 !important;
+  border: 1px solid #aa9460 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,.45) !important;
+}
+
+.EverythingMenuTabList {
+  background: linear-gradient(90deg, #403517, #534521, #403517) !important;
+  box-shadow: 0 5px 18px rgba(0,0,0,.27) !important;
+}
+
+.EverythingMenuTab {
+  color: #e7ddc5 !important;
+}
+
+.EverythingMenuTabActive {
+  background: rgba(237, 184, 83,.13) !important;
+  color: #fbdba3 !important;
+}
+
+.MenuSideBar {
+  background: linear-gradient(180deg, #4a3e1c, #302810) !important;
+}
+
+.ExitButtonInner {
+  color: #fff2f5 !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+}
+
+.EverythingMenuBackButton {
+  background-color: #663545 !important;
+  border: 1px solid #bd7085 !important;
+  border-radius: 8px !important;
+  color: #fff3f6 !important;
+  text-shadow: none !important;
+}
+
+.CreativeCategoryTab {
+  background: linear-gradient(145deg, #594b25, #42381a) !important;
+  border: 1px solid #7c6b40 !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.04) !important;
+}
+
+.CreativeItemSlotsSearch {
+  background: #322911 !important;
+  border: 1px solid #998451 !important;
+  border-radius: 8px !important;
+  color: #f1fbff !important;
+  box-shadow: inset 0 2px 7px rgba(0,0,0,.25) !important;
+}
+
+.CreativeCategoryDropdownMenu {
+  background: #302810 !important;
+  border: 1px solid #897749 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,.4) !important;
+}
+
+.EmoteWheelSlotIconHighlighted {
+  filter: drop-shadow(0 0 .5rem #eebe65) !important;
+}
+
+.EmoteWheelHint {
+  color: #fff1d8 !important;
+  text-shadow: 0 2px 5px #211a07 !important;
+}
+
+.SocialMenuBox {
+  background: linear-gradient(145deg, rgba(75, 64, 32,.97), rgba(53, 44, 19,.97)) !important;
+  border: 1px solid #7e6d42 !important;
+  border-radius: 11px !important;
+  box-shadow: 0 7px 20px rgba(0,0,0,.25), inset 0 1px rgba(255,255,255,.04) !important;
+}
+
+.SocialSectionTitle {
+  color: #fff6ba !important;
+}
+
+.SocialMenuEmpty {
+  color: #cdc2a7 !important;
+}
+
+.PlayerSearchInput {
+  border-radius: 8px 0 0 8px !important;
+}
+
+.PlayerSearchInputButton {
+  border-radius: 0 8px 8px 0 !important;
+}
+
+.JoinPartyHashtag {
+  background: #302810 !important;
+  border-color: #938052 !important;
+  border-radius: 8px 0 0 8px !important;
+  color: #f2e6cc !important;
+  flex: 0 0 2.2rem !important;
+  min-width: 2.2rem !important;
+  padding: 0 !important;
+  background-color: #302810 !important;
+  border: 1px solid #938052 !important;
+}
+
+.JoinPartyInput {
+  border-radius: 0 8px 8px 0 !important;
+  flex: 1 1 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding-left: .55rem !important;
+  background-color: #302810 !important;
+  border: 1px solid #938052 !important;
+  color: #f1fbff !important;
+  box-shadow: none !important;
+  border-color: #f0c87d !important;
+}
+
+.PlayerRow {
+  border-radius: 7px !important;
+  box-shadow: inset 0 -1px rgba(205, 184, 135,.11) !important;
+}
+
+.PartyCodeEntry {
+  display: flex !important;
+  align-items: stretch !important;
+  min-width: 0 !important;
+}
+
+.NewButton {
+  border-radius: 8px !important;
+}
+
+.RedButton {
+  background-color: #fc6464 !important;
+}
+
+.DisabledNewButton {
+  background-color: #a4a4a4 !important;
+}
+
+.BuyItemCostAndIcon {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+
+
+/* V6 — extra single-class rules for the screens documented by the player. */
+.SettingBox {
+  background-color: #42371a !important;
+  border: 1px solid #897749 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 14px rgba(0,0,0,.20) !important;
+}
+.InvenLeftSide {
+  background-color: #302811 !important;
+  border: 1px solid #897749 !important;
+  border-radius: 10px !important;
+}
+.InvenBodyRight {
+  background-color: #302811 !important;
+  border: 1px solid #897749 !important;
+  border-radius: 10px !important;
+}
+.InvenHoveredItemInfo {
+  background-color: #302810 !important;
+  border: 1px solid #b6a371 !important;
+  border-radius: 7px !important;
+  color: #f1fbff !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,.4) !important;
+}
+.HotBarItem {
+  border-radius: 7px !important;
+}
+.BloxdDropdownControl {
+  background-color: #493d1c !important;
+  border-color: #938052 !important;
+  border-radius: 7px !important;
+}
+.ShopItemUserInputText {
+  background-color: #302810 !important;
+  border: 1px solid #938052 !important;
+  border-radius: 7px !important;
+  color: #f1fbff !important;
+}
+.PlayerSearchInput {
+  background-color: #302810 !important;
+  border: 1px solid #938052 !important;
+  color: #f1fbff !important;
+}
+.CustomTextureFolderUpload {
+  background-color: #392f14 !important;
+  border: 1px solid #938052 !important;
+  border-radius: 9px !important;
+}
+.NotificationToast {
+  background-color: #42371a !important;
+  border: 1px solid #938052 !important;
+  border-radius: 9px !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,.3) !important;
+}
+.CosmeticShopCard {
+  border-color: #938052 !important;
+  border-radius: 10px !important;
+}
+.OwnProfilePreviewCard {
+  border-color: #938052 !important;
+  border-radius: 9px !important;
+}
+.ProfilePreview {
+  border-radius: 7px !important;
+}
+.RecentlyPlayedGame {
+  border-color: #938052 !important;
+  border-radius: 8px !important;
+}
+.HomeLinkButton {
+  border-radius: 8px !important;
+}
+.SocialBarDivider {
+  background-color: #b6a371 !important;
+}
+.LogoLoaderProgressBarText {
+  color: #eaf5ff !important;
+}

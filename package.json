@@ -8,12 +8,16 @@
     "start": "python3 -m http.server 3000 --bind 0.0.0.0",
     "test": "node --test tests/*.test.js",
     "test:browser": "node tools/browser-check.mjs",
-    "test:languages": "node tools/language-check.mjs"
+    "test:languages": "node tools/language-check.mjs",
+    "test:ui": "node tools/ui-check.mjs",
+    "build:ui": "python3 tools/build-ui-packs.py",
+    "check:ui": "python3 tools/build-ui-packs.py --check"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
-    "playwright": "1.56.1"
+    "playwright": "1.56.1",
+    "@axe-core/playwright": "4.10.2"
   }
 }

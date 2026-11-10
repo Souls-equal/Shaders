@@ -65,8 +65,8 @@ try {
   await page.goto(base);
   // Keep the original regression suite in French; language-check covers English first.
   await page.locator('.header [data-language-toggle]').click();
-  await check('three category tabs, real versions, V12 featured; no eager fetch or download', async () => {
-    assert.equal(await page.getByRole('tab').count(), 3);
+  await check('four category tabs, real versions, V12 featured; no eager fetch or download', async () => {
+    assert.equal(await page.getByRole('tab').count(), 4);
     assert.equal(await page.locator('.pack-card').count(), PACKS.filter(pack => pack.category === 'shaders').length);
     assert.equal(await page.locator('.pack-card.featured').getAttribute('data-pack-id'), latest.id);
     assert.equal(archiveRequests.length, 0);
@@ -76,6 +76,9 @@ try {
     await page.locator('#tab-schems').click();
     assert.equal(await page.locator('.pack-card').count(), 0);
     assert.match(await page.locator('.empty-state').textContent(), /Aucun schéma/);
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('#tab-ui').getAttribute('aria-selected'), 'true');
+    assert.equal(await page.locator('.ui-card').count(), 8);
     await page.keyboard.press('ArrowRight');
     assert.equal(await page.locator('#tab-t-packs').getAttribute('aria-selected'), 'true');
     assert.match(await page.locator('.empty-state').textContent(), /Aucun pack de textures/);
@@ -111,7 +114,7 @@ try {
     await page.waitForFunction(() => !document.querySelector('#pack-dialog').open);
     assert.match(await page.evaluate(() => document.activeElement.getAttribute('aria-label')), /Obtenir Aurora · V12/);
   });
-  for (const pack of PACKS) {
+  for (const pack of PACKS.filter(pack => pack.category === 'shaders')) {
     await check(`${pack.name} ${pack.version}: explicit download has correct filename and byte-identical archive`, async () => {
       await openPack(pack);
       assert.equal(await page.locator('#memory-label').textContent(), 'Aucun fichier chargé');
@@ -221,7 +224,7 @@ try {
     await closePack(); await download.delete();
   });
   await check('future schematics/texture ZIP entries use the same category and acquisition dialog', async () => {
-    const future = CATEGORIES.slice(1).map(category => ({ ...original, id: `test-${category.id}`, category: category.id, name: `Test ${category.label}`, version: '1', filename: 'sample.zip', url: `./${category.folder}/sample.zip` }));
+    const future = CATEGORIES.filter(category => ['schems', 't-packs'].includes(category.id)).map(category => ({ ...original, id: `test-${category.id}`, category: category.id, name: `Test ${category.label}`, version: '1', filename: 'sample.zip', url: `./${category.folder}/sample.zip` }));
     const fixture = await context.newPage();
     fixture.on('pageerror', error => errors.push(error.message));
     await fixture.route('**/js/config.js', route => route.fulfill({ contentType: 'text/javascript', body: `export const CATEGORIES = ${JSON.stringify(CATEGORIES)}; export const PACKS = ${JSON.stringify([...PACKS, ...future])};` }));

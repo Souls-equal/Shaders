@@ -1,8 +1,23 @@
 // All user-facing copy. Keys and interpolation placeholders are shared by both languages.
 export const messages = {
   "en": {
+    "ui.versionNote": "UI only. V5 is the label in the supplied CSS, not a game API version or a compatibility guarantee.",
+    "ui.pixelNote": "font-pixel requests Pixelify Sans from Google Fonts. Its display depends on the game allowing the font and its external download.",
+    "ui.normalNote": "font-normal keeps the supplied theme without the pixel-font override.",
+
+    "category.ui.label": "UI only",
+    "category.ui.description": "Menus and interface only. No block textures. Each theme comes in font-normal and font-pixel.",
+    "empty.ui": "No UI packs available yet.",
+    "details.unknownAuthor": "Author not specified",
+    "details.font": "Font variant",
+    "details.scope": "Scope",
+    "ui.scope": "Game interface only; no block textures",
+    "ui.badge": "UI ONLY",
+    "ui.swatch": "Theme colour indicator, not an in-game screenshot.",
+    "ui.count": "{themes} UI themes · {count} ZIP variants · font-normal / font-pixel",
+
     "page.title": "Bloxd File Share — Your packs, ready to play.",
-    "page.description": "Shaders, schematics and texture packs for Bloxd.io. Discover Aurora, Emberfall, Frostbound and Golden Hour, and choose how to get your pack.",
+    "page.description": "Shaders, schematics, UI themes and texture packs for Bloxd.io. Discover the shader collection and Nebula UI themes with normal and pixel font variants.",
     "skip": "Skip to content",
     "home": "Bloxd File Share, home",
     "navigation": "Main navigation",
@@ -190,8 +205,23 @@ export const messages = {
     "pack.aurora-original.description": "The archive first shared in this repository, without a confirmed version number."
   },
   "fr": {
+    "ui.versionNote": "UI uniquement. V5 est le libellé du CSS fourni, pas une version d’API du jeu ni une garantie de compatibilité.",
+    "ui.pixelNote": "font-pixel demande Pixelify Sans depuis Google Fonts. Son affichage dépend de la prise en charge par le jeu et du téléchargement de cette police externe.",
+    "ui.normalNote": "font-normal conserve le thème fourni sans la surcharge de police pixel.",
+
+    "category.ui.label": "UI uniquement",
+    "category.ui.description": "Les menus et l’interface uniquement, sans textures de blocs. Chaque thème existe en font-normal et font-pixel.",
+    "empty.ui": "Aucun pack d’UI disponible pour le moment.",
+    "details.unknownAuthor": "Auteur non précisé",
+    "details.font": "Variante de police",
+    "details.scope": "Contenu",
+    "ui.scope": "Interface du jeu uniquement, sans textures de blocs",
+    "ui.badge": "UI UNIQUEMENT",
+    "ui.swatch": "Indicateur de couleur du thème, pas une capture du jeu.",
+    "ui.count": "{themes} thèmes d’UI · {count} variantes ZIP · font-normal / font-pixel",
+
     "page.title": "Bloxd File Share — Vos packs, prêts à jouer.",
-    "page.description": "Shaders, schematics et texture packs pour Bloxd.io. Découvrez Aurora, Emberfall, Frostbound et Golden Hour, et choisissez comment récupérer votre pack.",
+    "page.description": "Shaders, schémas, thèmes d’UI et packs de textures pour Bloxd.io. Découvrez les shaders et les thèmes Nebula avec les variantes de police normale et pixel.",
     "skip": "Aller au contenu",
     "home": "Bloxd File Share, accueil",
     "navigation": "Navigation principale",

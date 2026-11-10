@@ -1,0 +1,344 @@
+{
+  "date": "2026-11-07",
+  "sourceCommit": "2b8163b4b3f7170693c5b806d14f64d826ac9fe0",
+  "environment": {
+    "browser": "141.0.7390.0",
+    "node": "v22.22.3",
+    "axePlaywright": "4.10.2",
+    "axeCore": "4.10.3"
+  },
+  "nodeTests": {
+    "total": 62,
+    "passed": 62
+  },
+  "browserChecks": {
+    "regressionPassed": 24,
+    "languagePassed": 12,
+    "uiPassed": 23
+  },
+  "packaging": "Deterministic stored ZIPs, one member css/nebula.css, original source bytes preserved. No invented manifest or API version.",
+  "externalFontCaveat": "The supplied pixel CSS references Google Fonts. Fonts are not embedded and the site does not load or execute pack CSS. In-game font support/import was not verified.",
+  "results": [
+    {
+      "name": "UI-only tab has eight themes, 16 explicit font choices, and no automatic archive requests",
+      "passed": true
+    },
+    {
+      "name": "Nebula Cosmic Purple font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Cosmic Purple font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Emerald Green font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Emerald Green font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Imperial Gold font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Imperial Gold font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Inferno Red font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Inferno Red font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Ocean Blue font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Ocean Blue font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Original Cyan font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Original Cyan font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Sakura Pink font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Sakura Pink font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Solar Orange font-normal: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "Nebula Solar Orange font-pixel: explicit download has the right archive, filename and metadata",
+      "passed": true
+    },
+    {
+      "name": "prepared pixel variant survives EN/FR changes and downloads without another fetch",
+      "passed": true
+    },
+    {
+      "name": "a missing pixel archive reports an error without downloading or substituting normal",
+      "passed": true
+    },
+    {
+      "name": "closing a pending normal request cannot leak its bytes into the pixel variant",
+      "passed": true
+    },
+    {
+      "name": "UI grid and expanded pixel dialog fit 320–1440px in English and French",
+      "passed": true
+    },
+    {
+      "name": "no automated WCAG 2 A/AA violations on UI grid and dialog, EN/FR, desktop/mobile",
+      "passed": true
+    },
+    {
+      "name": "no runtime errors, no pack CSS executed, and no external font requests from this site",
+      "passed": true
+    }
+  ],
+  "axe": [
+    {
+      "lang": "en",
+      "width": 390,
+      "view": "grid",
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "view": "dialog",
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "view": "grid",
+      "violations": []
+    },
+    {
+      "lang": "en",
+      "width": 1440,
+      "view": "dialog",
+      "violations": []
+    },
+    {
+      "lang": "fr",
+      "width": 390,
+      "view": "grid",
+      "violations": []
+    },
+    {
+      "lang": "fr",
+      "width": 390,
+      "view": "dialog",
+      "violations": []
+    },
+    {
+      "lang": "fr",
+      "width": 1440,
+      "view": "grid",
+      "violations": []
+    },
+    {
+      "lang": "fr",
+      "width": 1440,
+      "view": "dialog",
+      "violations": []
+    }
+  ],
+  "uploads": [
+    {
+      "name": "Nebula Cosmic Purple",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Cosmic_Purple/css/nebula.css",
+      "sourceSHA256": "2cf7449ec407d8dfbcb4aeaa41c4ac0b0f97ff0968861453cc8f71f3968cf871",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-cosmic-purple-font-normal.zip",
+      "bytes": 12209,
+      "sha256": "70b718c767b8c75413ce550f23165c2622e58146160b955a0649b61d8bda5c27"
+    },
+    {
+      "name": "Nebula Cosmic Purple",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Cosmic_Purple_Pixel/css/nebula.css",
+      "sourceSHA256": "20dcca72e61b12005ce9891866079ab55ad9c688d6aba0d29b2ccb792358f6d3",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-cosmic-purple-font-pixel.zip",
+      "bytes": 14159,
+      "sha256": "9c3af78118fb76fc70745c93d5da677719bca8d9f225528e1e090b2bce7f8c35"
+    },
+    {
+      "name": "Nebula Emerald Green",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Emerald_Green/css/nebula.css",
+      "sourceSHA256": "a3bd4b9b2538faf8c031ccc7b1e9afd8fb074de90f2e7c8b03fc56da8b5881c0",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-emerald-green-font-normal.zip",
+      "bytes": 12206,
+      "sha256": "8e9afd2af05e7cd9a4793d9147a0e92f4b9b54c010b7aab3edcf52daf8418d65"
+    },
+    {
+      "name": "Nebula Emerald Green",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Emerald_Green_Pixel/css/nebula.css",
+      "sourceSHA256": "92c1a46a71e5399603b6ace89c5e61118a6147a4fa00eb0b6f0193aa5dae2a4a",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-emerald-green-font-pixel.zip",
+      "bytes": 14156,
+      "sha256": "0f15f332464a7d4297689b57b57fefe389436b245abe42a2f40304bd972912a3"
+    },
+    {
+      "name": "Nebula Imperial Gold",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Imperial_Gold/css/nebula.css",
+      "sourceSHA256": "f30c76c75b6c851164fa7a2b6774391d70c50bc02b99b199502bbde414148999",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-imperial-gold-font-normal.zip",
+      "bytes": 12209,
+      "sha256": "832865f091b129d654fa43f09f04dcc85c76540392d7dc5bfeabb6e7cea5064a"
+    },
+    {
+      "name": "Nebula Imperial Gold",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Imperial_Gold_Pixel/css/nebula.css",
+      "sourceSHA256": "76185799645d0cc9cfc7a8d12190a049fec61492224a935cef7ee0f8b0328eed",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-imperial-gold-font-pixel.zip",
+      "bytes": 14159,
+      "sha256": "4ab61c874463a4a1255d7f1909d4d70f56da16d2e66092f4a8dba5d767b11fc7"
+    },
+    {
+      "name": "Nebula Inferno Red",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Inferno_Red/css/nebula.css",
+      "sourceSHA256": "ee8f10f041ebaea16397e741a3405fd1db56febf2744d9149d5a1e950de9335b",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-inferno-red-font-normal.zip",
+      "bytes": 12201,
+      "sha256": "1a62d6cee5dcc325d4cb181b4e524a20e5fbdbdb3174c2b4277374337edd143b"
+    },
+    {
+      "name": "Nebula Inferno Red",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Inferno_Red_Pixel/css/nebula.css",
+      "sourceSHA256": "ac4242ee652352be435400a6079e54d93a7206f2422cfd62e9403fc8504a66e4",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-inferno-red-font-pixel.zip",
+      "bytes": 14151,
+      "sha256": "64e341616d043075e94089237c8f676efb71813d44a7c7bcb9d5d7a407300484"
+    },
+    {
+      "name": "Nebula Ocean Blue",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Ocean_Blue/css/nebula.css",
+      "sourceSHA256": "2e85a1cf7aac2b05d233661919cde8a4aac605a8cbd7712b577d6ba9094471e6",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-ocean-blue-font-normal.zip",
+      "bytes": 12209,
+      "sha256": "e2ce504a91cdbc3001c9e1cd1c0253f4a659a099f655e85bd31defbba8b6897b"
+    },
+    {
+      "name": "Nebula Ocean Blue",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Ocean_Blue_Pixel/css/nebula.css",
+      "sourceSHA256": "5efee22613c0e115d77d66094e31a60ed8ab66a6776204673318ee5877688ea0",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-ocean-blue-font-pixel.zip",
+      "bytes": 14159,
+      "sha256": "b391eecae85f6157f4aefb26a8f7df70054449d01e7b8f2651facc249ccf82c5"
+    },
+    {
+      "name": "Nebula Original Cyan",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Original_Cyan/css/nebula.css",
+      "sourceSHA256": "426e6bb77eada635379cbd5105dbd79c04b79dbf10e2a60b1165d5cc09da050f",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-original-cyan-font-normal.zip",
+      "bytes": 12173,
+      "sha256": "b214e0af01d2af362b7c8bc7e6733daf32ae0801c0a54fe9e4bb9c1a92ae8160"
+    },
+    {
+      "name": "Nebula Original Cyan",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Original_Cyan_Pixel/css/nebula.css",
+      "sourceSHA256": "b47fae7f5a6ad91069065b65577b4da523527685ce86ae4f2200af7109c443df",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-original-cyan-font-pixel.zip",
+      "bytes": 14123,
+      "sha256": "d05529d9d4c38aa92c08891f60d39a8b23049bdd1d4d90e59c106b949d97ddd5"
+    },
+    {
+      "name": "Nebula Sakura Pink",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Sakura_Pink/css/nebula.css",
+      "sourceSHA256": "45d0304b5e5d43b87d28bbcff370db1b092d558131b04de806bda6116199d995",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-sakura-pink-font-normal.zip",
+      "bytes": 12209,
+      "sha256": "9e66936ccbd08e1941251ead0333d5fc389362ddc01e9998f8eb53fcf6568544"
+    },
+    {
+      "name": "Nebula Sakura Pink",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Sakura_Pink_Pixel/css/nebula.css",
+      "sourceSHA256": "01d49552ebcfad64403fefbdd1d273bb872efb0b7fac129dc74da1a15827c991",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-sakura-pink-font-pixel.zip",
+      "bytes": 14159,
+      "sha256": "648b7d82043f8e0c21bdd47762402b7beca0328cdd117d24ceacbafa72aea07a"
+    },
+    {
+      "name": "Nebula Solar Orange",
+      "font": "font-normal",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Solar_Orange/css/nebula.css",
+      "sourceSHA256": "31e95e5971bd63c62effd2918eea6f7de62790bb0dd66add0d214d28d2cbccca",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-solar-orange-font-normal.zip",
+      "bytes": 12206,
+      "sha256": "45d7f16e3a5a9f73010fa3204338edd66b8c9bd9b9cdb2907c2c836695903f3d"
+    },
+    {
+      "name": "Nebula Solar Orange",
+      "font": "font-pixel",
+      "versionLabel": "V5",
+      "source": "./t-packs/Nebula_Solar_Orange_Pixel/css/nebula.css",
+      "sourceSHA256": "3a6645d8535767484b1dbf2bf2bb3656a1b24c180cbdf63b6d1d1936c3e5434e",
+      "sourceMatchesUpload": true,
+      "archive": "./t-packs/nebula-solar-orange-font-pixel.zip",
+      "bytes": 14156,
+      "sha256": "b4fdd75ef69a1b26f774aaf1dc22d97b89cb0dd2ce18d4a23cd9b2eb5b68c0f2"
+    }
+  ],
+  "bloxdImport": "NOT TESTED"
+}
